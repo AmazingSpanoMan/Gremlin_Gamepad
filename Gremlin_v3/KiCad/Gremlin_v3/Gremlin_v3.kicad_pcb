@@ -94,7 +94,6 @@
 		)
 		(capping no)
 		(filling no)
-		(zone_defaults)
 		(pcbplotparams
 			(layerselection 0x00000000_00000000_55555555_57555570)
 			(plot_on_all_layers_selection 0x00000000_00000000_00000000_00000000)
@@ -36240,7 +36239,7 @@
 			(at -0.08 -0.38 90)
 			(unlocked yes)
 			(layer "B.SilkS")
-			(uuid "ed5703cd-0364-4b98-9737-7e51ac1602d5")
+			(uuid "9dd7e5f8-de3e-4b7b-aebb-84788fb66442")
 			(effects
 				(font
 					(size 1 1)
@@ -36254,7 +36253,7 @@
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "7345d8b6-f5d0-4359-97b3-d42123df89e5")
+			(uuid "afdddd54-8850-4679-bcc2-224d22b5efd4")
 			(effects
 				(font
 					(size 1 1)
@@ -36267,7 +36266,7 @@
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "e4fd2832-7283-4105-9f55-7cee4b5d93b1")
+			(uuid "f4c36a84-1ff9-4d76-8c0f-ac81fae2fc52")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -36279,7 +36278,7 @@
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "a1353f9c-40c7-4caf-93ec-7fb871746f79")
+			(uuid "83d11c6a-bbc4-4924-8900-5f2003d4c785")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -36291,7 +36290,9 @@
 		(path "/a64b0792-bc47-4489-94da-5d25c04882b2")
 		(sheetname "/")
 		(sheetfile "Gremlin_v3.kicad_sch")
-		(clearance 0.13)
+		(solder_paste_margin 0)
+		(solder_paste_margin_ratio 0)
+		(clearance 0)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
