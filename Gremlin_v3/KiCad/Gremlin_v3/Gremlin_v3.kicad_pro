@@ -40,8 +40,8 @@
         "other_text_upright": false,
         "pads": {
           "drill": 0.0,
-          "height": 1.0,
-          "width": 1.55
+          "height": 0.762,
+          "width": 0.26
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -60,13 +60,13 @@
           "hatch_smoothing_level": 0,
           "hatch_smoothing_value": 0.1,
           "hatch_thickness": 1.0,
-          "min_clearance": 0.25,
-          "min_island_area": 5.0,
+          "min_clearance": 0.23,
+          "min_island_area": 10.0,
           "min_thickness": 0.1,
           "pad_connection": 1,
           "remove_islands": 0,
-          "thermal_relief_gap": 0.5,
-          "thermal_relief_spoke_width": 0.5
+          "thermal_relief_gap": 0.23,
+          "thermal_relief_spoke_width": 0.23
         }
       },
       "diff_pair_dimensions": [
@@ -534,7 +534,7 @@
     "classes": [
       {
         "bus_width": 12,
-        "clearance": 0.4,
+        "clearance": 0.23,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
