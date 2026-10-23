@@ -1,2 +1,0 @@
-config SHIELD_GREMLINV3
-    def_bool $(shields_list_contains,gremlinv3)

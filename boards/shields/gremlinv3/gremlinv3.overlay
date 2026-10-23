@@ -58,8 +58,7 @@
 
         direct {
             kscan = <&kscan_direct>;
-            row = <5>;
-            column = <0>;
+            row-offset = <5>;
         };
     };
 
