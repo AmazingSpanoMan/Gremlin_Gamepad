@@ -10,6 +10,3 @@ on:
 jobs:
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
-    with:
-      build_matrix_path: Gremlin_v3/build.yaml
-      config_path: Gremlin_v3/config
