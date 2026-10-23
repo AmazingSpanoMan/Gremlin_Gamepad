@@ -1,5 +1,5 @@
 ---
 include:
-  - board: nice_nano_v2
+  - board: nice_nano//zmk
     shield: gremlinv3
     snippet: studio-rpc-usb-uart
