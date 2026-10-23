@@ -1,8 +1,15 @@
 #include <dt-bindings/zmk/matrix_transform.h>
 #include <dt-bindings/analog-stick/modes.h>
-#include <dt-bindings/adc/nrf-saadc.h>
+#include <dt-bindings/adc/adc.h>
 #include <dt-bindings/pinctrl/nrf-pinctrl.h>
 #include <physical_layouts.dtsi>
+
+#ifndef NRF_SAADC_AIN0
+#define NRF_SAADC_AIN0 0
+#endif
+#ifndef NRF_SAADC_AIN7
+#define NRF_SAADC_AIN7 7
+#endif
 
 / {
     chosen {
