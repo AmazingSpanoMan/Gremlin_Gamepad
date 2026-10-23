@@ -1,0 +1,16 @@
+manifest:
+  remotes:
+    - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+    - name: wdtamagi
+      url-base: https://github.com/wdtamagi
+  projects:
+    - name: zmk
+      remote: zmkfirmware
+      revision: main
+      import: app/west.yml
+    - name: zmk-driver-analog-stick
+      remote: wdtamagi
+      revision: main
+  self:
+    path: config

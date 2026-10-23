@@ -1,0 +1,6 @@
+if SHIELD_GREMLINV3
+
+config ZMK_KEYBOARD_NAME
+    default "Gremlin v3"
+
+endif
