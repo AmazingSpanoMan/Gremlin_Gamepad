@@ -201,37 +201,30 @@ lv_obj_t *zmk_display_status_screen(void) {
     memcpy(mascot_buf + 8, gremlin_mascot_frames[0], GREMLIN_MASCOT_BITMAP_SIZE);
     lv_obj_align(mascot_canvas, LV_ALIGN_TOP_LEFT, 2, 2);
 
-    /* 3b. Mascot Border Frame (66x66) */
+    /* 3b. Mascot Border Frame (66x65) */
     lv_obj_t *mascot_box = lv_obj_create(active_cont);
-    lv_obj_set_size(mascot_box, 66, 66);
+    lv_obj_set_size(mascot_box, 66, 65);
     lv_obj_set_style_pad_all(mascot_box, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(mascot_box, 1, LV_PART_MAIN);
     lv_obj_set_style_border_color(mascot_box, lv_color_black(), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(mascot_box, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_clear_flag(mascot_box, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_align(mascot_box, LV_ALIGN_TOP_LEFT, 1, 1);
+    lv_obj_align(mascot_box, LV_ALIGN_TOP_LEFT, 2, 2);
 
-    /* 3c. Title Header Label */
-    lv_obj_t *title_label = lv_label_create(active_cont);
-    lv_label_set_text(title_label, "GREMLIN v3");
-    lv_obj_align(title_label, LV_ALIGN_TOP_LEFT, 72, 2);
-
-    /* 3d. Battery Status Widget */
-#if IS_ENABLED(CONFIG_ZMK_WIDGET_BATTERY_STATUS)
-    zmk_widget_battery_status_init(&battery_status_widget, active_cont);
-    lv_obj_align(zmk_widget_battery_status_obj(&battery_status_widget), LV_ALIGN_TOP_RIGHT, -4, 2);
-#endif
-
-    /* 3e. Output Status Widget (USB / BLE profile) */
-#if IS_ENABLED(CONFIG_ZMK_WIDGET_OUTPUT_STATUS)
-    zmk_widget_output_status_init(&output_status_widget, active_cont);
-    lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 72, 22);
-#endif
-
-    /* 3f. Layer Status Widget */
+    /* 3c. Status Widgets (Original Clean 4-Row Spacing) */
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_LAYER_STATUS)
     zmk_widget_layer_status_init(&layer_status_widget, active_cont);
-    lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_TOP_LEFT, 72, 44);
+    lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_TOP_LEFT, 74, 8);
+#endif
+
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_BATTERY_STATUS)
+    zmk_widget_battery_status_init(&battery_status_widget, active_cont);
+    lv_obj_align(zmk_widget_battery_status_obj(&battery_status_widget), LV_ALIGN_TOP_LEFT, 74, 24);
+#endif
+
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_OUTPUT_STATUS)
+    zmk_widget_output_status_init(&output_status_widget, active_cont);
+    lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 74, 40);
 #endif
 
     /* One-shot boot timer: 2500ms */
