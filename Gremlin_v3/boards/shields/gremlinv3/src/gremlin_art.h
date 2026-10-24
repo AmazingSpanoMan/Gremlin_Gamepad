@@ -2,7 +2,7 @@
  * Copyright (c) 2026 The ZMK Contributors
  * SPDX-License-Identifier: MIT
  *
- * Gremlin v3 Display Art Bitmaps (1-bit monochrome for Sharp Memory LCD)
+ * Gremlin v3 High-Resolution Display Art Bitmaps (1-bit monochrome for Sharp Memory LCD)
  */
 
 #pragma once
@@ -19,8 +19,8 @@
 #define GREMLIN_SLEEP_BITMAP_SIZE 1360
 
 #define GREMLIN_MASCOT_WIDTH 64
-#define GREMLIN_MASCOT_HEIGHT 40
-#define GREMLIN_MASCOT_BITMAP_SIZE 320
+#define GREMLIN_MASCOT_HEIGHT 64
+#define GREMLIN_MASCOT_BITMAP_SIZE 512
 #define GREMLIN_MASCOT_FRAME_COUNT 4
 
 extern const uint8_t gremlin_boot_bitmap[GREMLIN_BOOT_BITMAP_SIZE];

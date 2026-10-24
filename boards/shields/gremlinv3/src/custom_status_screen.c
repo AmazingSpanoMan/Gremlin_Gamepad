@@ -56,16 +56,17 @@ static struct zmk_widget_layer_status layer_status_widget;
 #endif
 
 /* -------------------------------------------------------------------------
- * Animation and State Tracking
+ * Animation Sequence and State Tracking
  * ------------------------------------------------------------------------- */
 static int anim_step = 0;
+/* Frame sequence: 0=Alert, 1=Blink, 2=Wink, 3=Grin */
 static const uint8_t anim_sequence[] = {
     0, 0, /* Frame 0 (Alert) for 700ms */
     1,    /* Frame 1 (Blink) for 350ms */
     0, 0, /* Frame 0 (Alert) for 700ms */
     2,    /* Frame 2 (Wink) for 350ms */
     0, 0, /* Frame 0 (Alert) for 700ms */
-    3,    /* Frame 3 (Toothy Smile) for 350ms */
+    3,    /* Frame 3 (Excited Grin) for 500ms */
 };
 #define ANIM_SEQ_LEN (sizeof(anim_sequence) / sizeof(anim_sequence[0]))
 
@@ -82,7 +83,7 @@ static void mascot_anim_cb(lv_timer_t *timer) {
     }
     anim_step = (anim_step + 1) % ANIM_SEQ_LEN;
     uint8_t frame_idx = anim_sequence[anim_step];
-    uint8_t *dest = mascot_buf + 8; /* 8 bytes palette offset */
+    uint8_t *dest = mascot_buf + 8; /* 8-byte palette offset */
     memcpy(dest, gremlin_mascot_frames[frame_idx], GREMLIN_MASCOT_BITMAP_SIZE);
     lv_obj_invalidate(mascot_canvas);
 }
@@ -99,7 +100,7 @@ static void boot_timer_cb(lv_timer_t *timer) {
         lv_obj_invalidate(active_cont);
     }
 
-    /* Start idle mascot animation timer (cycles every 350ms) */
+    /* Start idle mascot animation timer */
     mascot_timer = lv_timer_create(mascot_anim_cb, 350, NULL);
 }
 
@@ -165,7 +166,7 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_clear_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_style_bg_color(screen, lv_color_white(), LV_PART_MAIN);
 
-    /* 1. Boot Logo Canvas (160x68) */
+    /* 1. High-Resolution Boot Logo Canvas (160x68) */
     boot_canvas = lv_canvas_create(screen);
     lv_canvas_set_buffer(boot_canvas, boot_buf, GREMLIN_BOOT_WIDTH, GREMLIN_BOOT_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
     lv_canvas_set_palette(boot_canvas, 0, lv_color_white());
@@ -173,7 +174,7 @@ lv_obj_t *zmk_display_status_screen(void) {
     memcpy(boot_buf + 8, gremlin_boot_bitmap, GREMLIN_BOOT_BITMAP_SIZE);
     lv_obj_align(boot_canvas, LV_ALIGN_TOP_LEFT, 0, 0);
 
-    /* 2. Standby / Sleep Canvas (160x68) */
+    /* 2. High-Resolution Standby / Sleep Canvas (160x68) */
     sleep_canvas = lv_canvas_create(screen);
     lv_canvas_set_buffer(sleep_canvas, sleep_buf, GREMLIN_SLEEP_WIDTH, GREMLIN_SLEEP_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
     lv_canvas_set_palette(sleep_canvas, 0, lv_color_white());
@@ -192,28 +193,28 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_align(active_cont, LV_ALIGN_TOP_LEFT, 0, 0);
     lv_obj_add_flag(active_cont, LV_OBJ_FLAG_HIDDEN); /* Hidden until boot finishes */
 
-    /* 3a. Animated Mascot Canvas (64x40) on left */
+    /* 3a. High-Resolution Animated Mascot Canvas (64x64) on left */
     mascot_canvas = lv_canvas_create(active_cont);
     lv_canvas_set_buffer(mascot_canvas, mascot_buf, GREMLIN_MASCOT_WIDTH, GREMLIN_MASCOT_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
     lv_canvas_set_palette(mascot_canvas, 0, lv_color_white());
     lv_canvas_set_palette(mascot_canvas, 1, lv_color_black());
     memcpy(mascot_buf + 8, gremlin_mascot_frames[0], GREMLIN_MASCOT_BITMAP_SIZE);
-    lv_obj_align(mascot_canvas, LV_ALIGN_LEFT_MID, 4, 0);
+    lv_obj_align(mascot_canvas, LV_ALIGN_TOP_LEFT, 2, 2);
 
-    /* 3b. Mascot Border Box */
+    /* 3b. Mascot Border Frame (66x66) */
     lv_obj_t *mascot_box = lv_obj_create(active_cont);
-    lv_obj_set_size(mascot_box, 68, 44);
+    lv_obj_set_size(mascot_box, 66, 66);
     lv_obj_set_style_pad_all(mascot_box, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(mascot_box, 1, LV_PART_MAIN);
     lv_obj_set_style_border_color(mascot_box, lv_color_black(), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(mascot_box, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_clear_flag(mascot_box, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_align(mascot_box, LV_ALIGN_LEFT_MID, 2, 0);
+    lv_obj_align(mascot_box, LV_ALIGN_TOP_LEFT, 1, 1);
 
     /* 3c. Title Header Label */
     lv_obj_t *title_label = lv_label_create(active_cont);
     lv_label_set_text(title_label, "GREMLIN v3");
-    lv_obj_align(title_label, LV_ALIGN_TOP_LEFT, 74, 2);
+    lv_obj_align(title_label, LV_ALIGN_TOP_LEFT, 72, 2);
 
     /* 3d. Battery Status Widget */
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_BATTERY_STATUS)
@@ -224,13 +225,13 @@ lv_obj_t *zmk_display_status_screen(void) {
     /* 3e. Output Status Widget (USB / BLE profile) */
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_OUTPUT_STATUS)
     zmk_widget_output_status_init(&output_status_widget, active_cont);
-    lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 74, 22);
+    lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 72, 22);
 #endif
 
     /* 3f. Layer Status Widget */
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_LAYER_STATUS)
     zmk_widget_layer_status_init(&layer_status_widget, active_cont);
-    lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_TOP_LEFT, 74, 44);
+    lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_TOP_LEFT, 72, 44);
 #endif
 
     /* One-shot boot timer: 2500ms */
