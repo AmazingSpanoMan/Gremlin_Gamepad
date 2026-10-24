@@ -2,7 +2,7 @@
  * Copyright (c) 2026 The ZMK Contributors
  * SPDX-License-Identifier: MIT
  *
- * Gremlin v3 High-Resolution Display Art Bitmaps (1-bit monochrome for Sharp Memory LCD)
+ * Gremlin v3 Full-Body Mascot & Display Art Bitmaps (1-bit monochrome for Sharp Memory LCD)
  */
 
 #pragma once

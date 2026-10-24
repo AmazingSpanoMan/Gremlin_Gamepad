@@ -59,14 +59,14 @@ static struct zmk_widget_layer_status layer_status_widget;
  * Animation Sequence and State Tracking
  * ------------------------------------------------------------------------- */
 static int anim_step = 0;
-/* Frame sequence: 0=Alert, 1=Blink, 2=Wink, 3=Grin */
+/* Frame sequence: 0=Idle Prowl, 1=Twitch/Tension, 2=Snarl, 3=Claw Slash */
 static const uint8_t anim_sequence[] = {
-    0, 0, /* Frame 0 (Alert) for 700ms */
-    1,    /* Frame 1 (Blink) for 350ms */
-    0, 0, /* Frame 0 (Alert) for 700ms */
-    2,    /* Frame 2 (Wink) for 350ms */
-    0, 0, /* Frame 0 (Alert) for 700ms */
-    3,    /* Frame 3 (Excited Grin) for 500ms */
+    0, 0, /* Frame 0 (Prowl) for 700ms */
+    1,    /* Frame 1 (Tail twitch / flex) for 350ms */
+    0, 0, /* Frame 0 (Prowl) for 700ms */
+    2,    /* Frame 2 (Snarl) for 350ms */
+    3,    /* Frame 3 (Vicious Claw Slash!) for 400ms */
+    2,    /* Frame 2 (Snarl recovery) for 300ms */
 };
 #define ANIM_SEQ_LEN (sizeof(anim_sequence) / sizeof(anim_sequence[0]))
 
@@ -166,7 +166,7 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_clear_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_style_bg_color(screen, lv_color_white(), LV_PART_MAIN);
 
-    /* 1. High-Resolution Boot Logo Canvas (160x68) */
+    /* 1. Full-Body Boot Logo Canvas (160x68) */
     boot_canvas = lv_canvas_create(screen);
     lv_canvas_set_buffer(boot_canvas, boot_buf, GREMLIN_BOOT_WIDTH, GREMLIN_BOOT_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
     lv_canvas_set_palette(boot_canvas, 0, lv_color_white());
@@ -174,7 +174,7 @@ lv_obj_t *zmk_display_status_screen(void) {
     memcpy(boot_buf + 8, gremlin_boot_bitmap, GREMLIN_BOOT_BITMAP_SIZE);
     lv_obj_align(boot_canvas, LV_ALIGN_TOP_LEFT, 0, 0);
 
-    /* 2. High-Resolution Standby / Sleep Canvas (160x68) */
+    /* 2. Full-Body Standby / Sleep Canvas (160x68) */
     sleep_canvas = lv_canvas_create(screen);
     lv_canvas_set_buffer(sleep_canvas, sleep_buf, GREMLIN_SLEEP_WIDTH, GREMLIN_SLEEP_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
     lv_canvas_set_palette(sleep_canvas, 0, lv_color_white());
@@ -193,7 +193,7 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_align(active_cont, LV_ALIGN_TOP_LEFT, 0, 0);
     lv_obj_add_flag(active_cont, LV_OBJ_FLAG_HIDDEN); /* Hidden until boot finishes */
 
-    /* 3a. High-Resolution Animated Mascot Canvas (64x64) on left */
+    /* 3a. Full-Body Animated Mascot Canvas (64x64) on left */
     mascot_canvas = lv_canvas_create(active_cont);
     lv_canvas_set_buffer(mascot_canvas, mascot_buf, GREMLIN_MASCOT_WIDTH, GREMLIN_MASCOT_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
     lv_canvas_set_palette(mascot_canvas, 0, lv_color_white());
