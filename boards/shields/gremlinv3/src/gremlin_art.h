@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  *
  * Gremlin v3 Full-Body Mascot & Display Art Bitmaps (1-bit monochrome for Sharp Memory LCD)
+ * Vertical / Portrait Mode: 68 width x 160 height (flex cable facing down toward user)
  */
 
 #pragma once
@@ -10,13 +11,13 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define GREMLIN_BOOT_WIDTH 160
-#define GREMLIN_BOOT_HEIGHT 68
-#define GREMLIN_BOOT_BITMAP_SIZE 1360
+#define GREMLIN_BOOT_WIDTH 68
+#define GREMLIN_BOOT_HEIGHT 160
+#define GREMLIN_BOOT_BITMAP_SIZE 1440
 
-#define GREMLIN_SLEEP_WIDTH 160
-#define GREMLIN_SLEEP_HEIGHT 68
-#define GREMLIN_SLEEP_BITMAP_SIZE 1360
+#define GREMLIN_SLEEP_WIDTH 68
+#define GREMLIN_SLEEP_HEIGHT 160
+#define GREMLIN_SLEEP_BITMAP_SIZE 1440
 
 #define GREMLIN_MASCOT_WIDTH 64
 #define GREMLIN_MASCOT_HEIGHT 64

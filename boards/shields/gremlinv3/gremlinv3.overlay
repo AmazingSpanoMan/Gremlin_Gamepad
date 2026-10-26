@@ -117,11 +117,11 @@
             , <&key_physical_attrs 100 100 400 355 0 0 0>  /* S20 */
             , <&key_physical_attrs 100 100 265 424 0 0 0>  /* S21 (Thumb Left) */
             , <&key_physical_attrs 100 100 365 449 0 0 0>  /* S22 (Thumb Right) */
-            , <&key_physical_attrs 100 100 480 450 0 0 0>  /* Stick Click (L3) */
-            , <&key_physical_attrs  50  50 480 380 0 0 0>  /* Stick Up */
-            , <&key_physical_attrs  50  50 480 520 0 0 0>  /* Stick Down */
-            , <&key_physical_attrs  50  50 410 450 0 0 0>  /* Stick Left */
-            , <&key_physical_attrs  50  50 550 450 0 0 0>  /* Stick Right */
+            , <&key_physical_attrs 100 100 650 350 0 0 0>  /* Stick Click (L3 Center) */
+            , <&key_physical_attrs 100 100 650 240 0 0 0>  /* Stick Up */
+            , <&key_physical_attrs 100 100 650 460 0 0 0>  /* Stick Down */
+            , <&key_physical_attrs 100 100 540 350 0 0 0>  /* Stick Left */
+            , <&key_physical_attrs 100 100 760 350 0 0 0>  /* Stick Right */
             ;
     };
 
@@ -242,7 +242,7 @@
         compatible = "sharp,ls0xx";
         reg = <0>;
         spi-max-frequency = <2000000>;
-        width = <160>;
-        height = <68>;
+        width = <68>;
+        height = <160>;
     };
 };
