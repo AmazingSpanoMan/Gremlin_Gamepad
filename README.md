@@ -36,7 +36,7 @@ Gremlin_Gamepad/
 ## Firmware Features
 
 * **ZMK Studio Ready:** Live key remapping on the fly without reflashing.
-* **Analog Thumbstick:** Direct SAADC sampling of Nintendo Switch Joy-Con analog stick with 8-way digital emulation or mouse emulation.
+* **Analog Thumbstick:** Direct SAADC sampling of Nintendo Switch Joy-Con analog stick with 8-way digital emulation or mouse emulation. Complete setup and tuning instructions: [**Joystick Calibration & Driver Guide**](JOYSTICK_CALIBRATION_GUIDE.md).
 * **Custom Nice!View Display:**
   * **Boot Screen:** Animated Gremlin startup logo.
   * **Active Screen:** 64×64 animated Gremlin mascot (Prowl, Twitch, Snarl, Claw Slash) alongside real-time Battery %, BLE profile, and active Layer name.
