@@ -160,6 +160,9 @@ ZMK_SUBSCRIPTION(gremlin_sleep_listener, zmk_position_state_changed);
  * ------------------------------------------------------------------------- */
 lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_t *screen = lv_obj_create(NULL);
+    if (!screen) {
+        return NULL;
+    }
     lv_obj_set_size(screen, 68, 160);
     lv_obj_set_style_pad_all(screen, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(screen, 0, LV_PART_MAIN);
@@ -168,89 +171,107 @@ lv_obj_t *zmk_display_status_screen(void) {
 
     /* 1. Full-Body Boot Logo Canvas (68x160 Portrait) */
     boot_canvas = lv_canvas_create(screen);
-    lv_canvas_set_buffer(boot_canvas, boot_buf, GREMLIN_BOOT_WIDTH, GREMLIN_BOOT_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
-    lv_canvas_set_palette(boot_canvas, 0, lv_color_white());
-    lv_canvas_set_palette(boot_canvas, 1, lv_color_black());
-    memcpy(boot_buf + 8, gremlin_boot_bitmap, GREMLIN_BOOT_BITMAP_SIZE);
-    lv_obj_align(boot_canvas, LV_ALIGN_TOP_LEFT, 0, 0);
+    if (boot_canvas) {
+        lv_canvas_set_buffer(boot_canvas, boot_buf, GREMLIN_BOOT_WIDTH, GREMLIN_BOOT_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
+        lv_canvas_set_palette(boot_canvas, 0, lv_color_white());
+        lv_canvas_set_palette(boot_canvas, 1, lv_color_black());
+        memcpy(boot_buf + 8, gremlin_boot_bitmap, GREMLIN_BOOT_BITMAP_SIZE);
+        lv_obj_align(boot_canvas, LV_ALIGN_TOP_LEFT, 0, 0);
+    }
 
     /* 2. Full-Body Standby / Sleep Canvas (68x160 Portrait) */
     sleep_canvas = lv_canvas_create(screen);
-    lv_canvas_set_buffer(sleep_canvas, sleep_buf, GREMLIN_SLEEP_WIDTH, GREMLIN_SLEEP_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
-    lv_canvas_set_palette(sleep_canvas, 0, lv_color_white());
-    lv_canvas_set_palette(sleep_canvas, 1, lv_color_black());
-    memcpy(sleep_buf + 8, gremlin_sleep_bitmap, GREMLIN_SLEEP_BITMAP_SIZE);
-    lv_obj_align(sleep_canvas, LV_ALIGN_TOP_LEFT, 0, 0);
-    lv_obj_add_flag(sleep_canvas, LV_OBJ_FLAG_HIDDEN);
+    if (sleep_canvas) {
+        lv_canvas_set_buffer(sleep_canvas, sleep_buf, GREMLIN_SLEEP_WIDTH, GREMLIN_SLEEP_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
+        lv_canvas_set_palette(sleep_canvas, 0, lv_color_white());
+        lv_canvas_set_palette(sleep_canvas, 1, lv_color_black());
+        memcpy(sleep_buf + 8, gremlin_sleep_bitmap, GREMLIN_SLEEP_BITMAP_SIZE);
+        lv_obj_align(sleep_canvas, LV_ALIGN_TOP_LEFT, 0, 0);
+        lv_obj_add_flag(sleep_canvas, LV_OBJ_FLAG_HIDDEN);
+    }
 
     /* 3. Active Status Container (68x160 Portrait) */
     active_cont = lv_obj_create(screen);
-    lv_obj_set_size(active_cont, 68, 160);
-    lv_obj_set_style_pad_all(active_cont, 0, LV_PART_MAIN);
-    lv_obj_set_style_border_width(active_cont, 0, LV_PART_MAIN);
-    lv_obj_clear_flag(active_cont, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_style_bg_color(active_cont, lv_color_white(), LV_PART_MAIN);
-    lv_obj_align(active_cont, LV_ALIGN_TOP_LEFT, 0, 0);
-    lv_obj_add_flag(active_cont, LV_OBJ_FLAG_HIDDEN); /* Hidden until boot finishes */
+    if (active_cont) {
+        lv_obj_set_size(active_cont, 68, 160);
+        lv_obj_set_style_pad_all(active_cont, 0, LV_PART_MAIN);
+        lv_obj_set_style_border_width(active_cont, 0, LV_PART_MAIN);
+        lv_obj_clear_flag(active_cont, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_set_style_bg_color(active_cont, lv_color_white(), LV_PART_MAIN);
+        lv_obj_align(active_cont, LV_ALIGN_TOP_LEFT, 0, 0);
+        lv_obj_add_flag(active_cont, LV_OBJ_FLAG_HIDDEN); /* Hidden until boot finishes */
 
-    /* 3a. Full-Body Animated Mascot Canvas (64x64) at Top */
-    mascot_canvas = lv_canvas_create(active_cont);
-    lv_canvas_set_buffer(mascot_canvas, mascot_buf, GREMLIN_MASCOT_WIDTH, GREMLIN_MASCOT_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
-    lv_canvas_set_palette(mascot_canvas, 0, lv_color_white());
-    lv_canvas_set_palette(mascot_canvas, 1, lv_color_black());
-    memcpy(mascot_buf + 8, gremlin_mascot_frames[0], GREMLIN_MASCOT_BITMAP_SIZE);
-    lv_obj_align(mascot_canvas, LV_ALIGN_TOP_LEFT, 2, 2);
+        /* 3a. Full-Body Animated Mascot Canvas (64x64) at Top */
+        mascot_canvas = lv_canvas_create(active_cont);
+        if (mascot_canvas) {
+            lv_canvas_set_buffer(mascot_canvas, mascot_buf, GREMLIN_MASCOT_WIDTH, GREMLIN_MASCOT_HEIGHT, LV_IMG_CF_INDEXED_1BIT);
+            lv_canvas_set_palette(mascot_canvas, 0, lv_color_white());
+            lv_canvas_set_palette(mascot_canvas, 1, lv_color_black());
+            memcpy(mascot_buf + 8, gremlin_mascot_frames[0], GREMLIN_MASCOT_BITMAP_SIZE);
+            lv_obj_align(mascot_canvas, LV_ALIGN_TOP_LEFT, 2, 2);
+        }
 
-    /* 3b. Mascot Border Frame (66x66) Centered Horizontally */
-    lv_obj_t *mascot_box = lv_obj_create(active_cont);
-    lv_obj_set_size(mascot_box, 66, 66);
-    lv_obj_set_style_pad_all(mascot_box, 0, LV_PART_MAIN);
-    lv_obj_set_style_border_width(mascot_box, 1, LV_PART_MAIN);
-    lv_obj_set_style_border_color(mascot_box, lv_color_black(), LV_PART_MAIN);
-    lv_obj_set_style_bg_opa(mascot_box, LV_OPA_TRANSP, LV_PART_MAIN);
-    lv_obj_clear_flag(mascot_box, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_align(mascot_box, LV_ALIGN_TOP_LEFT, 1, 1);
+        /* 3b. Mascot Border Frame (66x66) Centered Horizontally */
+        lv_obj_t *mascot_box = lv_obj_create(active_cont);
+        if (mascot_box) {
+            lv_obj_set_size(mascot_box, 66, 66);
+            lv_obj_set_style_pad_all(mascot_box, 0, LV_PART_MAIN);
+            lv_obj_set_style_border_width(mascot_box, 1, LV_PART_MAIN);
+            lv_obj_set_style_border_color(mascot_box, lv_color_black(), LV_PART_MAIN);
+            lv_obj_set_style_bg_opa(mascot_box, LV_OPA_TRANSP, LV_PART_MAIN);
+            lv_obj_clear_flag(mascot_box, LV_OBJ_FLAG_SCROLLABLE);
+            lv_obj_align(mascot_box, LV_ALIGN_TOP_LEFT, 1, 1);
+        }
 
-    /* Divider line below mascot */
-    lv_obj_t *div1 = lv_obj_create(active_cont);
-    lv_obj_set_size(div1, 60, 1);
-    lv_obj_set_style_bg_color(div1, lv_color_black(), LV_PART_MAIN);
-    lv_obj_set_style_border_width(div1, 0, LV_PART_MAIN);
-    lv_obj_set_style_pad_all(div1, 0, LV_PART_MAIN);
-    lv_obj_align(div1, LV_ALIGN_TOP_MID, 0, 70);
+        /* Divider line below mascot */
+        lv_obj_t *div1 = lv_obj_create(active_cont);
+        if (div1) {
+            lv_obj_set_size(div1, 60, 1);
+            lv_obj_set_style_bg_color(div1, lv_color_black(), LV_PART_MAIN);
+            lv_obj_set_style_border_width(div1, 0, LV_PART_MAIN);
+            lv_obj_set_style_pad_all(div1, 0, LV_PART_MAIN);
+            lv_obj_align(div1, LV_ALIGN_TOP_MID, 0, 70);
+        }
 
-    /* 3c. Status Widgets (Vertically Stacked in Portrait Layout) */
+        /* 3c. Status Widgets (Vertically Stacked in Portrait Layout) */
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_LAYER_STATUS)
-    zmk_widget_layer_status_init(&layer_status_widget, active_cont);
-    lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_TOP_MID, 0, 76);
+        zmk_widget_layer_status_init(&layer_status_widget, active_cont);
+        lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_TOP_MID, 0, 76);
 #endif
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_BATTERY_STATUS)
-    zmk_widget_battery_status_init(&battery_status_widget, active_cont);
-    lv_obj_align(zmk_widget_battery_status_obj(&battery_status_widget), LV_ALIGN_TOP_MID, 0, 96);
+        zmk_widget_battery_status_init(&battery_status_widget, active_cont);
+        lv_obj_align(zmk_widget_battery_status_obj(&battery_status_widget), LV_ALIGN_TOP_MID, 0, 96);
 #endif
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_OUTPUT_STATUS)
-    zmk_widget_output_status_init(&output_status_widget, active_cont);
-    lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_MID, 0, 116);
+        zmk_widget_output_status_init(&output_status_widget, active_cont);
+        lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_MID, 0, 116);
 #endif
 
-    /* Divider line above footer */
-    lv_obj_t *div2 = lv_obj_create(active_cont);
-    lv_obj_set_size(div2, 60, 1);
-    lv_obj_set_style_bg_color(div2, lv_color_black(), LV_PART_MAIN);
-    lv_obj_set_style_border_width(div2, 0, LV_PART_MAIN);
-    lv_obj_set_style_pad_all(div2, 0, LV_PART_MAIN);
-    lv_obj_align(div2, LV_ALIGN_TOP_MID, 0, 136);
+        /* Divider line above footer */
+        lv_obj_t *div2 = lv_obj_create(active_cont);
+        if (div2) {
+            lv_obj_set_size(div2, 60, 1);
+            lv_obj_set_style_bg_color(div2, lv_color_black(), LV_PART_MAIN);
+            lv_obj_set_style_border_width(div2, 0, LV_PART_MAIN);
+            lv_obj_set_style_pad_all(div2, 0, LV_PART_MAIN);
+            lv_obj_align(div2, LV_ALIGN_TOP_MID, 0, 136);
+        }
 
-    /* Footer branding */
-    lv_obj_t *footer_label = lv_label_create(active_cont);
-    lv_label_set_text(footer_label, "GREMLIN v3");
-    lv_obj_align(footer_label, LV_ALIGN_TOP_MID, 0, 142);
+        /* Footer branding */
+        lv_obj_t *footer_label = lv_label_create(active_cont);
+        if (footer_label) {
+            lv_label_set_text(footer_label, "GREMLIN v3");
+            lv_obj_align(footer_label, LV_ALIGN_TOP_MID, 0, 142);
+        }
+    }
 
     /* One-shot boot timer: 2500ms */
     lv_timer_t *b_timer = lv_timer_create(boot_timer_cb, 2500, NULL);
-    lv_timer_set_repeat_count(b_timer, 1);
+    if (b_timer) {
+        lv_timer_set_repeat_count(b_timer, 1);
+    }
 
     /* Periodic idle check timer: every 1000ms */
     idle_timer = lv_timer_create(idle_check_cb, 1000, NULL);

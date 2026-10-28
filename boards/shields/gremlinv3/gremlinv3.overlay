@@ -15,7 +15,7 @@
     chosen {
         zmk,kscan = &kscan_composite;
         zmk,physical-layout = &physical_layout0;
-        /* zephyr,display = &nice_view; */
+        zephyr,display = &nice_view;
     };
 
     /* -------------------------------------------------------------------------
@@ -204,21 +204,27 @@
 };
 
 /* -------------------------------------------------------------------------
- * 7. HARDWIRED NICE!VIEW DISPLAY (Sharp Memory LCD via SPI0) - Optional
+ * 7. HARDWIRED NICE!VIEW DISPLAY (Sharp Memory LCD via SPI0)
+ *
+ * Wire Color Mapping to Middle Pins:
+ * - CS   (Green)  -> Middle Pin 1 (P1.01)
+ * - SCK  (Blue)   -> Middle Pin 2 (P1.02)
+ * - MOSI (Yellow) -> Middle Pin 7 (P1.07)
+ * - VCC  (Red)    -> Pin 21 (3.3V)
+ * - GND  (Black)  -> Pin 3 or Pin 4 (GND)
  * ------------------------------------------------------------------------- */
-/*
 &pinctrl {
     spi0_default: spi0_default {
         group1 {
-            psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
-                    <NRF_PSEL(SPIM_MOSI, 1, 11)>;
+            psels = <NRF_PSEL(SPIM_SCK, 1, 2)>,    /* SCK (Blue):   P1.02 (Middle Pin 2) */
+                    <NRF_PSEL(SPIM_MOSI, 1, 7)>;  /* MOSI (Yellow): P1.07 (Middle Pin 7) */
         };
     };
 
     spi0_sleep: spi0_sleep {
         group1 {
-            psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
-                    <NRF_PSEL(SPIM_MOSI, 1, 11)>;
+            psels = <NRF_PSEL(SPIM_SCK, 1, 2)>,
+                    <NRF_PSEL(SPIM_MOSI, 1, 7)>;
             low-power-enable;
         };
     };
@@ -230,14 +236,13 @@
     pinctrl-0 = <&spi0_default>;
     pinctrl-1 = <&spi0_sleep>;
     pinctrl-names = "default", "sleep";
-    cs-gpios = <&pro_micro 1 GPIO_ACTIVE_HIGH>;
+    cs-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>; /* CS (Green): P1.01 (Middle Pin 1) */
 
     nice_view: ls0xx@0 {
         compatible = "sharp,ls0xx";
         reg = <0>;
         spi-max-frequency = <2000000>;
-        width = <160>;
-        height = <68>;
+        width = <68>;
+        height = <160>;
     };
 };
-*/
