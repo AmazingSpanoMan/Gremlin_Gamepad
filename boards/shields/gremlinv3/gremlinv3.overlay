@@ -45,11 +45,12 @@
 
     /* -------------------------------------------------------------------------
      * 2. DIRECT GPIO BUTTON (Joy-Con Stick Push / L3 Click on J2 Pin 1)
+     * Active-High with internal pull-down for Hall Effect stick (switches to 3.3V)
      * ------------------------------------------------------------------------- */
     kscan_direct: kscan_direct {
         compatible = "zmk,kscan-gpio-direct";
         wakeup-source;
-        input-gpios = <&pro_micro 21 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; /* P0.29 / Pin 20 */
+        input-gpios = <&pro_micro 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>; /* P0.29 / Pin 20 */
     };
 
     /* Composite kscan combining matrix keys and stick button */
