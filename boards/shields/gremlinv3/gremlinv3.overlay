@@ -14,6 +14,7 @@
 / {
     chosen {
         zmk,kscan = &kscan_composite;
+        zmk,matrix-transform = &default_transform;
         zmk,physical-layout = &physical_layout0;
         zephyr,display = &nice_view;
     };
