@@ -20,26 +20,28 @@
 
     /* -------------------------------------------------------------------------
      * 1. KEY MATRIX (5 Cols x 5 Rows for Keys S1..S22)
+     * Hardware: Diodes point from Rows (Anode) to Switches/Cols (Cathode)
+     * Driving Rows HIGH and reading Cols with internal Pull-Down (row2col)
      * ------------------------------------------------------------------------- */
     kscan0: kscan_0 {
         compatible = "zmk,kscan-gpio-matrix";
-        diode-direction = "col2row";
+        diode-direction = "row2col";
         wakeup-source;
 
-        col-gpios
-            = <&pro_micro 2 GPIO_ACTIVE_HIGH>  /* Col 0: P0.17 (Pin 5) */
-            , <&pro_micro 3 GPIO_ACTIVE_HIGH>  /* Col 1: P0.20 (Pin 6) */
-            , <&pro_micro 4 GPIO_ACTIVE_HIGH>  /* Col 2: P0.22 (Pin 7) */
-            , <&pro_micro 5 GPIO_ACTIVE_HIGH>  /* Col 3: P0.24 (Pin 8) */
-            , <&pro_micro 6 GPIO_ACTIVE_HIGH>  /* Col 4: P1.00 (Pin 9) */
+        row-gpios
+            = <&pro_micro 7  GPIO_ACTIVE_HIGH>  /* Row 0: P0.11 (Pin 10) */
+            , <&pro_micro 8  GPIO_ACTIVE_HIGH>  /* Row 1: P1.04 (Pin 11) */
+            , <&pro_micro 9  GPIO_ACTIVE_HIGH>  /* Row 2: P1.06 (Pin 12) */
+            , <&pro_micro 16 GPIO_ACTIVE_HIGH>  /* Row 3: P0.10 (Pin 14) */
+            , <&pro_micro 10 GPIO_ACTIVE_HIGH>  /* Row 4: P0.09 (Pin 13) */
             ;
 
-        row-gpios
-            = <&pro_micro 7  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> /* Row 0: P0.11 (Pin 10) */
-            , <&pro_micro 8  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> /* Row 1: P1.04 (Pin 11) */
-            , <&pro_micro 9  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> /* Row 2: P1.06 (Pin 12) */
-            , <&pro_micro 16 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> /* Row 3: P0.10 (Pin 14) */
-            , <&pro_micro 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> /* Row 4: P0.09 (Pin 13) */
+        col-gpios
+            = <&pro_micro 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> /* Col 0: P0.17 (Pin 5) */
+            , <&pro_micro 3 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> /* Col 1: P0.20 (Pin 6) */
+            , <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> /* Col 2: P0.22 (Pin 7) */
+            , <&pro_micro 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> /* Col 3: P0.24 (Pin 8) */
+            , <&pro_micro 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> /* Col 4: P1.00 (Pin 9) */
             ;
     };
 
@@ -136,9 +138,9 @@
         x-center = <2048>;
         x-max = <3900>;
         y-min = <200>;
-        y-center = <2048>;
+        y-center = <1750>; /* Calibrated to resting 1.5V on Pin 18 (AIN1) */
         y-max = <3900>;
-        deadzone-percent = <5>;
+        deadzone-percent = <12>;
         wait-period-idle = <100>;
         wait-period-active = <1>;
     };
@@ -151,8 +153,8 @@
         layer0 {
             layers = <0>;
             mode = <ANALOG_STICK_MODE_SWITCH>;
-            switch-activation-point = <40>;
-            switch-hysteresis = <4>;
+            switch-activation-point = <65>; /* Threshold raised to prevent accidental WASD triggering when stick is clicked */
+            switch-hysteresis = <8>;
             up-position = <23>;
             down-position = <24>;
             left-position = <25>;
