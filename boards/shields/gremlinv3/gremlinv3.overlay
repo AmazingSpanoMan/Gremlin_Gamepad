@@ -244,8 +244,8 @@
     nice_view: ls0xx@0 {
         compatible = "sharp,ls0xx";
         reg = <0>;
-        spi-max-frequency = <2000000>;
-        width = <68>;
-        height = <160>;
+        spi-max-frequency = <1000000>;
+        width = <160>;
+        height = <68>;
     };
 };
