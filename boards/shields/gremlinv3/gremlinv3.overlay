@@ -242,7 +242,7 @@
         compatible = "sharp,ls0xx";
         reg = <0>;
         spi-max-frequency = <2000000>;
-        width = <68>;
-        height = <160>;
+        width = <160>;
+        height = <68>;
     };
 };
