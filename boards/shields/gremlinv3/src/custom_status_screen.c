@@ -211,9 +211,9 @@ static struct layer_status_state layer_status_get_state(const zmk_event_t *eh) {
     };
 }
 
-ZMK_DISPLAY_WIDGET_LISTENER(widget_layer_status, struct layer_status_state,
+ZMK_DISPLAY_WIDGET_LISTENER(gremlin_layer_status, struct layer_status_state,
                             layer_status_update_cb, layer_status_get_state)
-ZMK_SUBSCRIPTION(widget_layer_status, zmk_layer_state_changed);
+ZMK_SUBSCRIPTION(gremlin_layer_status, zmk_layer_state_changed);
 
 struct battery_status_state {
     uint8_t level;
@@ -237,11 +237,11 @@ static struct battery_status_state battery_status_get_state(const zmk_event_t *e
     };
 }
 
-ZMK_DISPLAY_WIDGET_LISTENER(widget_battery_status, struct battery_status_state,
+ZMK_DISPLAY_WIDGET_LISTENER(gremlin_battery_status, struct battery_status_state,
                             battery_status_update_cb, battery_status_get_state)
-ZMK_SUBSCRIPTION(widget_battery_status, zmk_battery_state_changed);
+ZMK_SUBSCRIPTION(gremlin_battery_status, zmk_battery_state_changed);
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
-ZMK_SUBSCRIPTION(widget_battery_status, zmk_usb_conn_state_changed);
+ZMK_SUBSCRIPTION(gremlin_battery_status, zmk_usb_conn_state_changed);
 #endif
 
 struct output_status_state {
@@ -262,11 +262,11 @@ static struct output_status_state output_status_get_state(const zmk_event_t *eh)
     };
 }
 
-ZMK_DISPLAY_WIDGET_LISTENER(widget_output_status, struct output_status_state,
+ZMK_DISPLAY_WIDGET_LISTENER(gremlin_output_status, struct output_status_state,
                             output_status_update_cb, output_status_get_state)
-ZMK_SUBSCRIPTION(widget_output_status, zmk_endpoint_changed);
+ZMK_SUBSCRIPTION(gremlin_output_status, zmk_endpoint_changed);
 #if defined(CONFIG_ZMK_BLE)
-ZMK_SUBSCRIPTION(widget_output_status, zmk_ble_active_profile_changed);
+ZMK_SUBSCRIPTION(gremlin_output_status, zmk_ble_active_profile_changed);
 #endif
 
 /* -------------------------------------------------------------------------
@@ -451,9 +451,9 @@ lv_obj_t *zmk_display_status_screen(void) {
     }
 
     /* Initialize ZMK widget state subscriptions */
-    widget_layer_status_init();
-    widget_battery_status_init();
-    widget_output_status_init();
+    gremlin_layer_status_init();
+    gremlin_battery_status_init();
+    gremlin_output_status_init();
 
     /* One-shot boot timer: 2500ms */
     lv_timer_t *b_timer = lv_timer_create(boot_timer_cb, 2500, NULL);
