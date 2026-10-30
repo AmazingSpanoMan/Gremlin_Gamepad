@@ -30,8 +30,11 @@
  * ------------------------------------------------------------------------- */
 #define STATUS_PHYS_W 88
 #define STATUS_PHYS_H 68
+#define STATUS_STRIDE 11 /* (88 + 7) / 8 */
+
 #define USER_CANVAS_W 68
 #define USER_CANVAS_H 88
+#define USER_STRIDE 9    /* (68 + 7) / 8 */
 
 /* -------------------------------------------------------------------------
  * Static Canvas Buffers (All 1-bit monochrome indexed)
@@ -87,7 +90,7 @@ static int active_ble_profile = 0;
  * Draw Status Content (1:1 Pixel-Perfect Rotation into Physical Screen)
  * ------------------------------------------------------------------------- */
 static void draw_status_content(void) {
-    if (!user_canvas || !status_canvas || !boot_complete) {
+    if (!user_canvas || !status_canvas) {
         return;
     }
 
@@ -177,12 +180,23 @@ static void draw_status_content(void) {
     lv_canvas_draw_text(user_canvas, 0, 73, 68, &lbl_black, "GREMLIN v3");
 
     /* 6. Exact 1:1 Pixel Transposition (Rotate 90 deg clockwise into physical 88x68 canvas) */
+    memset(status_phys_buf + 8, 0, STATUS_STRIDE * STATUS_PHYS_H);
+
+    const uint8_t *u_src = user_virt_buf + 8;
+    uint8_t *p_dst = status_phys_buf + 8;
+
     for (int uy = 0; uy < USER_CANVAS_H; uy++) {
         int px = 87 - uy;
+        int px_byte = px >> 3;
+        uint8_t px_bit = 1 << (7 - (px & 7));
+        const uint8_t *u_row = u_src + (uy * USER_STRIDE);
+
         for (int ux = 0; ux < USER_CANVAS_W; ux++) {
             int py = ux;
-            lv_color_t c = lv_canvas_get_px(user_canvas, ux, uy);
-            lv_canvas_set_px(status_canvas, px, py, c);
+            uint8_t bit = (u_row[ux >> 3] >> (7 - (ux & 7))) & 1;
+            if (bit) {
+                p_dst[py * STATUS_STRIDE + px_byte] |= px_bit;
+            }
         }
     }
 
@@ -440,13 +454,13 @@ lv_obj_t *zmk_display_status_screen(void) {
             lv_obj_align(status_canvas, LV_ALIGN_TOP_LEFT, 2, 0);
         }
 
-        /* 3e. Hidden Virtual User Canvas (68x88 for Razor-Sharp Layout) */
+        /* 3e. Off-Screen Virtual User Canvas (68x88 for Razor-Sharp Layout) */
         user_canvas = lv_canvas_create(active_cont);
         if (user_canvas) {
             lv_canvas_set_buffer(user_canvas, user_virt_buf, USER_CANVAS_W, USER_CANVAS_H, LV_IMG_CF_INDEXED_1BIT);
             lv_canvas_set_palette(user_canvas, 0, lv_color_white());
             lv_canvas_set_palette(user_canvas, 1, lv_color_black());
-            lv_obj_add_flag(user_canvas, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_pos(user_canvas, -200, -200);
         }
     }
 
@@ -454,6 +468,9 @@ lv_obj_t *zmk_display_status_screen(void) {
     gremlin_layer_status_init();
     gremlin_battery_status_init();
     gremlin_output_status_init();
+
+    /* Pre-draw status content so buffer is ready */
+    draw_status_content();
 
     /* One-shot boot timer: 2500ms */
     lv_timer_t *b_timer = lv_timer_create(boot_timer_cb, 2500, NULL);
