@@ -141,7 +141,7 @@
         y-min = <400>;
         y-center = <1933>;
         y-max = <3500>;
-        deadzone-percent = <15>;
+        deadzone-percent = <20>;
         wait-period-idle = <100>;
         wait-period-active = <1>;
     };
@@ -154,8 +154,8 @@
         layer0 {
             layers = <0>;
             mode = <ANALOG_STICK_MODE_SWITCH>;
-            switch-activation-point = <50>;
-            switch-hysteresis = <10>;
+            switch-activation-point = <28>;
+            switch-hysteresis = <6>;
             up-position = <23>;
             down-position = <24>;
             left-position = <25>;
