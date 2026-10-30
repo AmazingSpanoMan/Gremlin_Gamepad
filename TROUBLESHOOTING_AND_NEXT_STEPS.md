@@ -7,11 +7,11 @@
 
 ## 1. Summary of Current Git & Firmware State
 
-### Latest Local Commit: `fc58968`
+### Latest Status: Column 2 Pin 1 Hardware Rescue
 - **File:** `boards/shields/gremlinv3/gremlinv3.overlay`
-  - Explicitly mapped **Matrix Column 2** directly to raw hardware GPIO `<&gpio0 22 GPIO_ACTIVE_HIGH>` (Pad 7 / Silk `4`).
-  - **Hardware Short Resolved:** Solder short between Pad 7 and GND was cleared; resistance to GND is now OL (infinite).
-  - **Switch Continuity Verified:** Continuity from Pad 7 to all 5 switch left pads (S3, S8, S13, S18, S21) is 100% intact.
+  - Explicitly mapped **Matrix Column 2** to **Pin 1 (`P0.06` / Silk `0` / TX0)**: `<&gpio0 6 GPIO_ACTIVE_HIGH>`.
+  - **Hardware Diagnostic Confirmed:** Pin 7 (`P0.22`) internal silicon high-side driver was permanently damaged by the previous 0.4 Ohm ground short; bridging Pin 7 to Pin 10 does not register keystrokes.
+  - **Hardware Rescue Procedure:** Solder a single thin jumper wire from Nice!Nano Pin 1 (Silk `0`) to the left pad of any Column 2 switch (e.g. S3 or S21). Since all 5 switch left pads are already verified connected by the PCB trace, this single wire restores all 5 keys (`2`, `W`, `S`, `X`, `Space`).
 - **File:** `boards/shields/gremlinv3/src/custom_status_screen.c`
   - Fixed blank status screen by allocating `user_virt_buf` as `LV_IMG_CF_TRUE_COLOR` (`LV_CANVAS_BUF_SIZE_TRUE_COLOR(68, 88)`). LVGL's vector font engine (`lv_canvas_draw_text`) requires True Color to render fonts like Montserrat; the pixels are then 1:1 packed into the 1-bit physical landscape display buffer (`status_phys_buf`).
 - **Action Required:** Push this commit to GitHub using **GitHub Desktop** so the GitHub Actions workflow builds the latest `.uf2` firmware.
