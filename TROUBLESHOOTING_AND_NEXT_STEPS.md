@@ -7,9 +7,11 @@
 
 ## 1. Summary of Current Git & Firmware State
 
-### Latest Local Commit: `6988be4`
+### Latest Local Commit: `fc58968`
 - **File:** `boards/shields/gremlinv3/gremlinv3.overlay`
-  - Restored **Matrix Column 2** from raw GPIO back to native PCB trace: `<&pro_micro 4 GPIO_ACTIVE_HIGH>` (Pad 7 / `P0.22`).
+  - Explicitly mapped **Matrix Column 2** directly to raw hardware GPIO `<&gpio0 22 GPIO_ACTIVE_HIGH>` (Pad 7 / Silk `4`).
+  - **Hardware Short Resolved:** Solder short between Pad 7 and GND was cleared; resistance to GND is now OL (infinite).
+  - **Switch Continuity Verified:** Continuity from Pad 7 to all 5 switch left pads (S3, S8, S13, S18, S21) is 100% intact.
 - **File:** `boards/shields/gremlinv3/src/custom_status_screen.c`
   - Fixed blank status screen by allocating `user_virt_buf` as `LV_IMG_CF_TRUE_COLOR` (`LV_CANVAS_BUF_SIZE_TRUE_COLOR(68, 88)`). LVGL's vector font engine (`lv_canvas_draw_text`) requires True Color to render fonts like Montserrat; the pixels are then 1:1 packed into the 1-bit physical landscape display buffer (`status_phys_buf`).
 - **Action Required:** Push this commit to GitHub using **GitHub Desktop** so the GitHub Actions workflow builds the latest `.uf2` firmware.
