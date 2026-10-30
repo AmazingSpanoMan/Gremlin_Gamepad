@@ -28,28 +28,11 @@
     combos {
         compatible = "zmk,combos";
 
-        /* On Layer 0 (Game): Hold G+V (S21 + S22) to enter Function Mode */
-        combo_fn_0 {
+        /* Press both thumb keys (G + V / S21 + S22) to momentarily activate Settings layer */
+        combo_settings {
             timeout-ms = <60>;
             key-positions = <20 21>;
             bindings = <&mo 3>;
-            layers = <0>;
-        };
-
-        /* On Layer 1 (Mouse): Hold G+V (S21 + S22) to enter Function Mode */
-        combo_fn_1 {
-            timeout-ms = <60>;
-            key-positions = <20 21>;
-            bindings = <&mo 4>;
-            layers = <1>;
-        };
-
-        /* On Layer 2 (Media): Hold G+V (S21 + S22) to enter Function Mode */
-        combo_fn_2 {
-            timeout-ms = <60>;
-            key-positions = <20 21>;
-            bindings = <&mo 5>;
-            layers = <2>;
         };
     };
 
@@ -139,16 +122,13 @@
 
         /*
          * ----------------------------------------------------------------------
-         * Layer 3: Function Mode (Held from Layer 0 / Game)
-         * - Row 0 (1-5): Select Bluetooth Profiles 1..5
-         * - Row 1 (6): Clear Current Bluetooth Profile
-         * - Row 1 (7): Clear ALL Bluetooth Profiles
-         * - Row 3 (6 / S16): Move DOWN to Layer 2 (Media)
-         * - Row 3 (7 / S17): Move UP to Layer 1 (Mouse)
+         * Layer 3: Settings (4th Layer)
+         * - Bluetooth profile selection and clear controls
+         * - Layer navigation controls
          * ----------------------------------------------------------------------
          */
-        fn_layer_0 {
-            display-name = "Fn";
+        settings_layer {
+            display-name = "Settings";
             bindings = <
                 /* Row 0: S1 - S5 (BT Profiles 1..5) */
                 &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
@@ -156,66 +136,8 @@
                 &bt BT_CLR    &bt BT_CLR_ALL &out OUT_TOG &studio_unlock &bootloader
                 /* Row 2: Unused */
                 &none         &none         &none         &none         &none
-                /* Row 3: S16 (Row 4 Key 6) = Down to Layer 2; S17 (Row 4 Key 7) = Up to Layer 1 */
+                /* Row 3: S16 (Row 4 Key 6) = Down; S17 (Row 4 Key 7) = Up */
                 &to 2         &to 1         &none         &none         &none
-                /* Thumb Keys */
-                &trans        &trans
-                /* Stick Click & Directions */
-                &studio_unlock
-                &none         &none         &none         &none
-            >;
-        };
-
-        /*
-         * ----------------------------------------------------------------------
-         * Layer 4: Function Mode (Held from Layer 1 / Mouse)
-         * - Row 0 (1-5): Select Bluetooth Profiles 1..5
-         * - Row 1 (6): Clear Current Bluetooth Profile
-         * - Row 1 (7): Clear ALL Bluetooth Profiles
-         * - Row 3 (6 / S16): Move DOWN to Layer 0 (Game)
-         * - Row 3 (7 / S17): Move UP to Layer 2 (Media)
-         * ----------------------------------------------------------------------
-         */
-        fn_layer_1 {
-            display-name = "Fn";
-            bindings = <
-                /* Row 0: S1 - S5 (BT Profiles 1..5) */
-                &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
-                /* Row 1: S6 = Clear Current BT, S7 = Clear ALL BT, Extras */
-                &bt BT_CLR    &bt BT_CLR_ALL &out OUT_TOG &studio_unlock &bootloader
-                /* Row 2: Unused */
-                &none         &none         &none         &none         &none
-                /* Row 3: S16 (Row 4 Key 6) = Down to Layer 0; S17 (Row 4 Key 7) = Up to Layer 2 */
-                &to 0         &to 2         &none         &none         &none
-                /* Thumb Keys */
-                &trans        &trans
-                /* Stick Click & Directions */
-                &studio_unlock
-                &none         &none         &none         &none
-            >;
-        };
-
-        /*
-         * ----------------------------------------------------------------------
-         * Layer 5: Function Mode (Held from Layer 2 / Media)
-         * - Row 0 (1-5): Select Bluetooth Profiles 1..5
-         * - Row 1 (6): Clear Current Bluetooth Profile
-         * - Row 1 (7): Clear ALL Bluetooth Profiles
-         * - Row 3 (6 / S16): Move DOWN to Layer 1 (Mouse)
-         * - Row 3 (7 / S17): Move UP to Layer 0 (Game)
-         * ----------------------------------------------------------------------
-         */
-        fn_layer_2 {
-            display-name = "Fn";
-            bindings = <
-                /* Row 0: S1 - S5 (BT Profiles 1..5) */
-                &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
-                /* Row 1: S6 = Clear Current BT, S7 = Clear ALL BT, Extras */
-                &bt BT_CLR    &bt BT_CLR_ALL &out OUT_TOG &studio_unlock &bootloader
-                /* Row 2: Unused */
-                &none         &none         &none         &none         &none
-                /* Row 3: S16 (Row 4 Key 6) = Down to Layer 1; S17 (Row 4 Key 7) = Up to Layer 0 */
-                &to 1         &to 0         &none         &none         &none
                 /* Thumb Keys */
                 &trans        &trans
                 /* Stick Click & Directions */

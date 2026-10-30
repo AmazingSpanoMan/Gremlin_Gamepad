@@ -7,14 +7,14 @@
 
 ## 1. Summary of Current Git & Firmware State
 
-### Latest Status: Column 2 Pin 1 Hardware Rescue & Multi-Button Keymap System
+### Latest Status: Column 2 Pin 1 Hardware Rescue & Settings Layer (4th Layer) via G+V Combo
 - **File:** `boards/shields/gremlinv3/gremlinv3.overlay`
   - Explicitly mapped **Matrix Column 2** to **Nice!Nano Silk `1` (`P0.06` / Header Pin 2 / RX)**: `<&gpio0 6 GPIO_ACTIVE_HIGH>`.
   - **Hardware Diagnostic Confirmed:** Touching Silk `1` to Silk `7` (Row 0) typed for Column 2! The rescue GPIO is 100% active and working.
   - **Hardware Rescue Procedure:** Solder a single thin jumper wire from **Nice!Nano Silk `1` (Header Pin 2)** to the **left pad of any Column 2 switch** (e.g. S3, S8, S13, S18, or S21). Since all 5 switch left pads are already verified connected by the PCB trace, this single wire restores all 5 keys (`2`, `W`, `S`, `X`, `Space`).
 - **Files:** `boards/shields/gremlinv3/gremlinv3.keymap` & `config/gremlinv3.keymap`
   - **Game Layer (Layer 0):** Row 0 is `Ctrl+1..5`, Row 1 is `Ctrl+6..0`, Row 2 is `1..5`, Row 3 is `6..9, Space`, Thumbs are `G` (Left / S21) and `V` (Right / S22), Joystick is `W, A, S, D` + Click `0`.
-  - **Multi-Button System (Hold G + V):**
+  - **Settings Layer (Hold G + V):**
     - Top Row (1..5): Select Bluetooth Profiles 1 to 5 (`BT_SEL 0..4`).
     - 2nd Row Key 6: Clear Current Bluetooth Profile (`BT_CLR`).
     - 2nd Row Key 7: Clear ALL Bluetooth Profiles (`BT_CLR_ALL`).
