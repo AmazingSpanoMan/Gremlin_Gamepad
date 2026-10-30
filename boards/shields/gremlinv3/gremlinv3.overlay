@@ -10,6 +10,9 @@
 #ifndef NRF_SAADC_AIN5
 #define NRF_SAADC_AIN5 5
 #endif
+#ifndef NRF_SAADC_AIN7
+#define NRF_SAADC_AIN7 7
+#endif
 
 / {
     chosen {
@@ -52,7 +55,7 @@
     kscan_direct: kscan_direct {
         compatible = "zmk,kscan-gpio-direct";
         wakeup-source;
-        input-gpios = <&pro_micro 19 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; /* P0.03 / Pin 18 (J2 Pin 3) */
+        input-gpios = <&pro_micro 19 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; /* P0.02 (AIN0) / Silk 19 / Pin 18 (J2 Pin 3) */
     };
 
     /* Composite kscan combining matrix keys and stick button */
@@ -133,7 +136,7 @@
      * ------------------------------------------------------------------------- */
     analog_stick0: analog_stick0 {
         compatible = "zmk,analog-stick";
-        io-channels = <&adc 0>, <&adc 1>; /* Channel 0 (AIN0: X) & Channel 1 (AIN5: Y) */
+        io-channels = <&adc 0>, <&adc 1>; /* Channel 0 (AIN5: X via Silk 20) & Channel 1 (AIN7: Y via Silk 21) */
         invert-x;
         x-min = <500>;
         x-center = <1909>;
@@ -186,23 +189,23 @@
     #address-cells = <1>;
     #size-cells = <0>;
 
-    /* Channel 0: Joy-Con X-Axis (J2 Pin 4 -> Pin 17 / Silk 18 / pro_micro 18 / P0.02 / AIN0) */
+    /* Channel 0: Joy-Con X-Axis (J2 Pin 4 -> Silk 18 -> Jumpered to Silk 20 / Pin 19 / P0.29 / AIN5) */
     channel@0 {
         reg = <0>;
         zephyr,gain = "ADC_GAIN_1_6";
         zephyr,reference = "ADC_REF_INTERNAL";
         zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
-        zephyr,input-positive = <NRF_SAADC_AIN0>;
+        zephyr,input-positive = <NRF_SAADC_AIN5>;
         zephyr,resolution = <12>;
     };
 
-    /* Channel 1: Joy-Con Y-Axis (J2 Pin 1 -> Pin 20 / Silk 21 / pro_micro 21 / P0.29 / AIN5) */
+    /* Channel 1: Joy-Con Y-Axis (J2 Pin 1 -> Silk 21 / Pin 20 / P0.31 / AIN7) */
     channel@1 {
         reg = <1>;
         zephyr,gain = "ADC_GAIN_1_6";
         zephyr,reference = "ADC_REF_INTERNAL";
         zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
-        zephyr,input-positive = <NRF_SAADC_AIN5>;
+        zephyr,input-positive = <NRF_SAADC_AIN7>;
         zephyr,resolution = <12>;
     };
 };
