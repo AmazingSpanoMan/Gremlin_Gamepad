@@ -31,7 +31,7 @@
         col-gpios
             = <&pro_micro 2 GPIO_ACTIVE_HIGH>  /* Col 0: P0.17 (Pin 5) */
             , <&pro_micro 3 GPIO_ACTIVE_HIGH>  /* Col 1: P0.20 (Pin 6) */
-            , <&gpio0 6     GPIO_ACTIVE_HIGH>  /* Col 2: P0.06 (Pin 1 / Silk 0 / TX0 - remapped rescue pin) */
+            , <&gpio0 6     GPIO_ACTIVE_HIGH>  /* Col 2: P0.06 (Header Pin 2 / Silk 1 / RX - verified rescue pin) */
             , <&pro_micro 5 GPIO_ACTIVE_HIGH>  /* Col 3: P0.24 (Pin 8) */
             , <&pro_micro 6 GPIO_ACTIVE_HIGH>  /* Col 4: P1.00 (Pin 9) */
             ;
