@@ -28,11 +28,28 @@
     combos {
         compatible = "zmk,combos";
 
-        /* Press both thumb keys (S21 + S22) to toggle Layer 2 (System/Bluetooth) */
-        combo_system_layer {
-            timeout-ms = <50>;
+        /* On Layer 0 (Game): Hold G+V (S21 + S22) to enter Function Mode */
+        combo_fn_0 {
+            timeout-ms = <60>;
             key-positions = <20 21>;
-            bindings = <&tog 2>;
+            bindings = <&mo 3>;
+            layers = <0>;
+        };
+
+        /* On Layer 1 (Mouse): Hold G+V (S21 + S22) to enter Function Mode */
+        combo_fn_1 {
+            timeout-ms = <60>;
+            key-positions = <20 21>;
+            bindings = <&mo 4>;
+            layers = <1>;
+        };
+
+        /* On Layer 2 (Media): Hold G+V (S21 + S22) to enter Function Mode */
+        combo_fn_2 {
+            timeout-ms = <60>;
+            key-positions = <20 21>;
+            bindings = <&mo 5>;
+            layers = <2>;
         };
     };
 
@@ -41,25 +58,28 @@
 
         /*
          * ----------------------------------------------------------------------
-         * Layer 0: Gaming / Default
-         * Analog Stick Mode: SWITCH (Emulates WASD movement)
+         * Layer 0: Game / Default
+         * Top 2 rows: Ctrl + Numbers (Ctrl+1..5, Ctrl+6..0)
+         * Bottom 2 rows: Numbers (1..5, 6..9), Space
+         * Thumbs: G (S21), V (S22)
+         * Analog Stick Mode: SWITCH (Emulates WASD) + Click (0)
          * ----------------------------------------------------------------------
          */
         default_layer {
             display-name = "Game";
             bindings = <
-                /* Row 0: S1 - S5 */
-                &kp ESC       &kp N1        &kp N2        &kp N3        &kp N4
-                /* Row 1: S6 - S10 */
-                &kp TAB       &kp Q         &kp W         &kp E         &kp R
-                /* Row 2: S11 - S15 */
-                &kp LSHIFT    &kp A         &kp S         &kp D         &kp F
-                /* Row 3: S16 - S20 */
-                &kp LCTRL     &kp Z         &kp X         &kp C         &kp V
+                /* Row 0: S1 - S5 (Ctrl + 1..5) */
+                &kp LC(N1)    &kp LC(N2)    &kp LC(N3)    &kp LC(N4)    &kp LC(N5)
+                /* Row 1: S6 - S10 (Ctrl + 6..0) */
+                &kp LC(N6)    &kp LC(N7)    &kp LC(N8)    &kp LC(N9)    &kp LC(N0)
+                /* Row 2: S11 - S15 (Numbers 1..5) */
+                &kp N1        &kp N2        &kp N3        &kp N4        &kp N5
+                /* Row 3: S16 - S20 (Numbers 6..9, Space) */
+                &kp N6        &kp N7        &kp N8        &kp N9        &kp SPACE
                 /* Thumb Keys: S21, S22 */
-                &kp SPACE     &mo 1
+                &kp G         &kp V
                 /* Joy-Con Stick Click (L3) */
-                &kp LALT
+                &kp N0
                 /* Joy-Con Analog Stick Directions (Switch Mode: WASD) */
                 &kp W         &kp S         &kp A         &kp D
             >;
@@ -68,7 +88,7 @@
         /*
          * ----------------------------------------------------------------------
          * Layer 1: Mouse & Navigation
-         * Analog Stick Mode: MOUSE (Distance from center controls cursor speed)
+         * Analog Stick Mode: MOUSE
          * ----------------------------------------------------------------------
          */
         mouse_layer {
@@ -81,38 +101,125 @@
                 /* Row 2: Navigation & Volume */
                 &kp LEFT      &kp DOWN      &kp RIGHT     &kp PG_DN     &kp C_VOL_DN
                 /* Row 3: Mouse Clicks & Media */
-                &mkp LCLK     &mkp MCLK     &mkp RCLK     &kp C_PP      &mo 2
+                &mkp LCLK     &mkp MCLK     &mkp RCLK     &kp C_PP      &kp SPACE
                 /* Thumb Keys */
-                &mkp LCLK     &trans
-                /* Joy-Con Stick Click (L3) -> Right Click in Mouse Mode */
+                &kp G         &kp V
+                /* Joy-Con Stick Click (L3) -> Right Click */
                 &mkp RCLK
-                /* Joy-Con Analog Stick Directions (Inactive in Mouse Mode: stick sends mouse events) */
+                /* Joy-Con Analog Stick Directions (Inactive in Mouse Mode) */
                 &none         &none         &none         &none
             >;
         };
 
         /*
          * ----------------------------------------------------------------------
-         * Layer 2: System / Bluetooth / Scroll
-         * Analog Stick Mode: SCROLL (Distance from center controls scroll wheel)
+         * Layer 2: Media & System
+         * Analog Stick Mode: SCROLL
          * ----------------------------------------------------------------------
          */
-        system_layer {
-            display-name = "System";
+        media_layer {
+            display-name = "Media";
             bindings = <
-                /* Row 0: Bluetooth Profiles 0-3 & Clear */
-                &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_CLR
-                /* Row 1: BLE/USB Output Switch, Studio Unlock, Bootloader */
-                &out OUT_BLE  &out OUT_USB  &none         &studio_unlock &bootloader
-                /* Row 2: System Reset */
-                &sys_reset    &none         &none         &none         &none
-                /* Row 3: Utility */
-                &none         &none         &none         &none         &trans
-                /* Thumb Keys: Return to Game Layer */
-                &to 0         &trans
-                /* Joy-Con Stick Click (L3) -> Studio Unlock */
+                /* Row 0: F6 - F10 */
+                &kp F6        &kp F7        &kp F8        &kp F9        &kp F10
+                /* Row 1: Media Control */
+                &kp C_PREV    &kp C_PP      &kp C_NEXT    &kp C_VOL_DN  &kp C_VOL_UP
+                /* Row 2: Arrow Keys & Enter */
+                &kp LEFT      &kp UP        &kp DOWN      &kp RIGHT     &kp ENTER
+                /* Row 3: Navigation */
+                &kp ESC       &kp TAB       &kp BSPC      &kp DEL       &kp SPACE
+                /* Thumb Keys */
+                &kp G         &kp V
+                /* Joy-Con Stick Click (L3) -> Mute */
+                &kp C_MUTE
+                /* Joy-Con Analog Stick Directions (Inactive in Scroll Mode) */
+                &none         &none         &none         &none
+            >;
+        };
+
+        /*
+         * ----------------------------------------------------------------------
+         * Layer 3: Function Mode (Held from Layer 0 / Game)
+         * - Row 0 (1-5): Select Bluetooth Profiles 1..5
+         * - Row 1 (6): Clear Current Bluetooth Profile
+         * - Row 1 (7): Clear ALL Bluetooth Profiles
+         * - Row 3 (6 / S16): Move DOWN to Layer 2 (Media)
+         * - Row 3 (7 / S17): Move UP to Layer 1 (Mouse)
+         * ----------------------------------------------------------------------
+         */
+        fn_layer_0 {
+            display-name = "Fn";
+            bindings = <
+                /* Row 0: S1 - S5 (BT Profiles 1..5) */
+                &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
+                /* Row 1: S6 = Clear Current BT, S7 = Clear ALL BT, Extras */
+                &bt BT_CLR    &bt BT_CLR_ALL &out OUT_TOG &studio_unlock &bootloader
+                /* Row 2: Unused */
+                &none         &none         &none         &none         &none
+                /* Row 3: S16 (Row 4 Key 6) = Down to Layer 2; S17 (Row 4 Key 7) = Up to Layer 1 */
+                &to 2         &to 1         &none         &none         &none
+                /* Thumb Keys */
+                &trans        &trans
+                /* Stick Click & Directions */
                 &studio_unlock
-                /* Joy-Con Analog Stick Directions (Inactive in Scroll Mode: stick sends wheel events) */
+                &none         &none         &none         &none
+            >;
+        };
+
+        /*
+         * ----------------------------------------------------------------------
+         * Layer 4: Function Mode (Held from Layer 1 / Mouse)
+         * - Row 0 (1-5): Select Bluetooth Profiles 1..5
+         * - Row 1 (6): Clear Current Bluetooth Profile
+         * - Row 1 (7): Clear ALL Bluetooth Profiles
+         * - Row 3 (6 / S16): Move DOWN to Layer 0 (Game)
+         * - Row 3 (7 / S17): Move UP to Layer 2 (Media)
+         * ----------------------------------------------------------------------
+         */
+        fn_layer_1 {
+            display-name = "Fn";
+            bindings = <
+                /* Row 0: S1 - S5 (BT Profiles 1..5) */
+                &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
+                /* Row 1: S6 = Clear Current BT, S7 = Clear ALL BT, Extras */
+                &bt BT_CLR    &bt BT_CLR_ALL &out OUT_TOG &studio_unlock &bootloader
+                /* Row 2: Unused */
+                &none         &none         &none         &none         &none
+                /* Row 3: S16 (Row 4 Key 6) = Down to Layer 0; S17 (Row 4 Key 7) = Up to Layer 2 */
+                &to 0         &to 2         &none         &none         &none
+                /* Thumb Keys */
+                &trans        &trans
+                /* Stick Click & Directions */
+                &studio_unlock
+                &none         &none         &none         &none
+            >;
+        };
+
+        /*
+         * ----------------------------------------------------------------------
+         * Layer 5: Function Mode (Held from Layer 2 / Media)
+         * - Row 0 (1-5): Select Bluetooth Profiles 1..5
+         * - Row 1 (6): Clear Current Bluetooth Profile
+         * - Row 1 (7): Clear ALL Bluetooth Profiles
+         * - Row 3 (6 / S16): Move DOWN to Layer 1 (Mouse)
+         * - Row 3 (7 / S17): Move UP to Layer 0 (Game)
+         * ----------------------------------------------------------------------
+         */
+        fn_layer_2 {
+            display-name = "Fn";
+            bindings = <
+                /* Row 0: S1 - S5 (BT Profiles 1..5) */
+                &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
+                /* Row 1: S6 = Clear Current BT, S7 = Clear ALL BT, Extras */
+                &bt BT_CLR    &bt BT_CLR_ALL &out OUT_TOG &studio_unlock &bootloader
+                /* Row 2: Unused */
+                &none         &none         &none         &none         &none
+                /* Row 3: S16 (Row 4 Key 6) = Down to Layer 1; S17 (Row 4 Key 7) = Up to Layer 0 */
+                &to 1         &to 0         &none         &none         &none
+                /* Thumb Keys */
+                &trans        &trans
+                /* Stick Click & Directions */
+                &studio_unlock
                 &none         &none         &none         &none
             >;
         };
