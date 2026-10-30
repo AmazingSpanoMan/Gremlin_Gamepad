@@ -41,7 +41,7 @@ static uint8_t sleep_buf[LV_CANVAS_BUF_SIZE_INDEXED_1BIT(GREMLIN_SLEEP_WIDTH, GR
 static uint8_t mascot_buf[LV_CANVAS_BUF_SIZE_INDEXED_1BIT(GREMLIN_MASCOT_WIDTH, GREMLIN_MASCOT_HEIGHT)];
 
 static uint8_t status_phys_buf[LV_CANVAS_BUF_SIZE_INDEXED_1BIT(STATUS_PHYS_W, STATUS_PHYS_H)];
-static uint8_t user_virt_buf[LV_CANVAS_BUF_SIZE_INDEXED_1BIT(USER_CANVAS_W, USER_CANVAS_H)];
+static uint8_t user_virt_buf[LV_CANVAS_BUF_SIZE_TRUE_COLOR(USER_CANVAS_W, USER_CANVAS_H)];
 
 /* -------------------------------------------------------------------------
  * UI Objects
@@ -177,12 +177,21 @@ static void draw_status_content(void) {
     lv_canvas_draw_text(user_canvas, 0, 73, 68, &lbl_black, "GREMLIN v3");
 
     /* 6. Exact 1:1 Pixel Transposition (Rotate 90 deg clockwise into physical 88x68 canvas) */
+    uint8_t *dest = status_phys_buf + 8;
+    memset(dest, 0, (STATUS_PHYS_W / 8) * STATUS_PHYS_H);
     for (int uy = 0; uy < USER_CANVAS_H; uy++) {
         int px = 87 - uy;
         for (int ux = 0; ux < USER_CANVAS_W; ux++) {
             int py = ux;
             lv_color_t c = lv_canvas_get_px(user_canvas, ux, uy);
-            lv_canvas_set_px(status_canvas, px, py, c);
+            uint32_t c32 = lv_color_to32(c);
+            uint8_t r = (c32 >> 16) & 0xFF;
+            uint8_t g = (c32 >> 8) & 0xFF;
+            uint8_t b = c32 & 0xFF;
+            if ((r + g + b) < 384) {
+                int byte_idx = py * (STATUS_PHYS_W / 8) + (px >> 3);
+                dest[byte_idx] |= (1 << (7 - (px & 7)));
+            }
         }
     }
 
@@ -443,9 +452,7 @@ lv_obj_t *zmk_display_status_screen(void) {
         /* 3e. Hidden Virtual User Canvas (68x88 for Razor-Sharp Layout) */
         user_canvas = lv_canvas_create(active_cont);
         if (user_canvas) {
-            lv_canvas_set_buffer(user_canvas, user_virt_buf, USER_CANVAS_W, USER_CANVAS_H, LV_IMG_CF_INDEXED_1BIT);
-            lv_canvas_set_palette(user_canvas, 0, lv_color_white());
-            lv_canvas_set_palette(user_canvas, 1, lv_color_black());
+            lv_canvas_set_buffer(user_canvas, user_virt_buf, USER_CANVAS_W, USER_CANVAS_H, LV_IMG_CF_TRUE_COLOR);
             lv_obj_add_flag(user_canvas, LV_OBJ_FLAG_HIDDEN);
         }
     }
