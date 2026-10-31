@@ -28,9 +28,12 @@ The Gremlin v3 PCB was designed around an **ATmega32U4 Pro Micro**, where pins 1
 
 ---
 
-## 2. The Single Hardware Step Required at Home
+## 2. Hardware Jumper (Applied & Verified!)
 
-To give the X-axis an ADC-capable pin on the Nice!Nano, **solder a single short jumper wire between Header Pin 17 (Silk 18) and Header Pin 19 (Silk 20)**.
+The jumper between **Header Pin 17 (Silk 18)** and **Header Pin 19 (Silk 20)** has been **soldered and verified**:
+- Clicking the stick now cleanly types `0` without any stuck `a` keys!
+- Silk 19 is isolated as a pure digital button (`&kp N0`).
+- Silk 20 is connected directly to the X-axis analog output.
 
 > [!IMPORTANT]
 > **No trace cutting is needed for this step.**  
@@ -122,14 +125,19 @@ analog_stick_listener0: analog_stick_listener0 {
 };
 
 /* -------------------------------------------------------------------------
- * SAADC Configuration
+ * SAADC Configuration (Nordic PSELP: AIN5 = 6, AIN7 = 8)
  * ------------------------------------------------------------------------- */
+#undef NRF_SAADC_AIN5
+#define NRF_SAADC_AIN5 6
+#undef NRF_SAADC_AIN7
+#define NRF_SAADC_AIN7 8
+
 &adc {
     status = "okay";
     #address-cells = <1>;
     #size-cells = <0>;
 
-    /* Channel 0: X-Axis on Silk 20 (P0.29 / AIN5) */
+    /* Channel 0: X-Axis on Silk 20 (P0.29 / AIN5 -> PSELP 6) */
     channel@0 {
         reg = <0>;
         zephyr,gain = "ADC_GAIN_1_6";
