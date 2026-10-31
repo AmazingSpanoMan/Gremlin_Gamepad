@@ -72,39 +72,42 @@ Nice!Nano Right Header:
 
 ---
 
-## 4. Multimeter Verification Baseline (Live Hardware Readings)
+## 4. Multimeter & ADC Hardware Verification Baseline
 
-When measuring DC voltage with a multimeter on the Nice!Nano header pins relative to GND:
+When measuring DC voltage with a multimeter on the Nice!Nano header pins relative to GND, and corresponding raw SAADC readings reported over USB:
 
-| Signal / Pin | At Rest (Neutral) | Full Tilt / Pressed | Expected Behavior |
-| :--- | :--- | :--- | :--- |
-| **Silk 20 (X-Axis, via Jumper)** | `~1.68 V` | **Left:** `~2.99 V`<br>**Right:** `~0.52 V` | Midpoint at rest, full 2.5V swing |
-| **Silk 21 (Y-Axis)** | `~1.70 V` | **Up:** `~0.41 V`<br>**Down:** `~3.01 V` | Midpoint at rest, full 2.6V swing |
-| **Silk 19 (L3 Button)** | `3.28 V` (High) | **Clicked:** `0.00 V` (GND) | Crisp active-low digital switch |
+| Signal / Pin | Multimeter Neutral | Multimeter Deflected | Raw SAADC Neutral | Raw SAADC Deflected | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Silk 20 (X-Axis, via Jumper)** | `~1.68 V` | **Left:** `~2.99 V`<br>**Right:** `~0.52 V` | **`~255`** | **Left:** `~400 - 420`<br>**Right:** `~50 - 70` | Inverted (`invert-x`) |
+| **Silk 21 (Y-Axis)** | `~1.70 V` | **Up:** `~0.41 V`<br>**Down:** `~3.01 V` | **`~225`** | **Up:** `~0`<br>**Down:** `~342 - 350` | Standard Y |
+| **Silk 19 (L3 Button)** | `3.28 V` (High) | **Clicked:** `0.00 V` (GND) | Digital | `0` (Released: High, Pressed: Low) | Active-Low Button |
 
 ---
 
 ## 5. Firmware Configuration (`gremlinv3.overlay`)
 
-The overlay has been committed and pushed to `origin/main` with the corrected configuration:
+The overlay has been committed and calibrated with live hardware limits:
 
 ```dts
 /* -------------------------------------------------------------------------
  * Analog Stick Driver (wdtamagi/zmk-driver-analog-stick)
+ * Calibrated to actual live SAADC hardware readings:
+ * - X neutral: ~255, Right: ~50, Left: ~420
+ * - Y neutral: ~225, Up: ~0, Down: ~350
  * ------------------------------------------------------------------------- */
 analog_stick0: analog_stick0 {
     compatible = "zmk,analog-stick";
     io-channels = <&adc 0>, <&adc 1>; /* Channel 0 (AIN5: X) & Channel 1 (AIN7: Y) */
     invert-x;
-    x-min = <500>;
-    x-center = <1909>;
-    x-max = <3500>;
-    y-min = <400>;
-    y-center = <1933>;
-    y-max = <3500>;
+    x-min = <50>;
+    x-center = <255>;
+    x-max = <420>;
+    y-min = <0>;
+    y-center = <225>;
+    y-max = <350>;
     deadzone-percent = <20>;
     wait-period-idle = <100>;
-    wait-period-active = <1>;
+    wait-period-active = <10>;
 };
 
 analog_stick_listener0: analog_stick_listener0 {
@@ -115,7 +118,7 @@ analog_stick_listener0: analog_stick_listener0 {
     layer0 {
         layers = <0>;
         mode = <ANALOG_STICK_MODE_SWITCH>;
-        switch-activation-point = <28>;
+        switch-activation-point = <30>;
         switch-hysteresis = <6>;
         up-position = <23>;    /* &kp W */
         down-position = <24>;  /* &kp S */
@@ -196,3 +199,22 @@ kscan_direct: kscan_direct {
      - Tilt Right: Types `d`.
      - Press Stick Down (Click): Types `0` (or whatever behavior is assigned to position 22).
      - Keys S1–S22: All matrix keys (including Column 2 via rescue pin Silk 1) type normally.
+
+---
+
+## 7. Next Hardware Revision Plan (KiCad Schematic & PCB)
+
+Once the prototype WASD functionality is fully verified, we will proceed with updating the KiCad files so your next PCB manufactured by JLCPCB will work straight out of the box with zero manual jumpers:
+
+1. **Joy-Con X-Axis Permanent Routing:**
+   * Re-route `J2 Pin 4` directly to **Nice!Nano Pin 19 (`P0.29` / `AIN5`)** instead of Pin 17 (`P1.15`).
+2. **Matrix Column 2 Permanent Routing:**
+   * Re-route Column 2 net directly to **Nice!Nano Pin 1 / Silk 1 (`P0.06` / `gpio0 6`)**, eliminating the bodge wire on the column diode.
+3. **Dedicated 5-Pin Nice!View Display Connector (`J3`):**
+   * Add a dedicated 5-pin header footprint (`1x05 2.54mm` or JST-SH) on the PCB with silk labels:
+     - Pin 1: `CS`   -> Routed to Nice!Nano Middle Pin 1 (`P1.01`)
+     - Pin 2: `SCK`  -> Routed to Nice!Nano Middle Pin 2 (`P1.02`)
+     - Pin 3: `MOSI` -> Routed to Nice!Nano Middle Pin 7 (`P1.07`)
+     - Pin 4: `VCC`  -> Routed to 3.3V rail
+     - Pin 5: `GND`  -> Routed to GND plane
+   * This permanently eliminates hardwiring the Nice!View screen with loose wires to the middle pads.
