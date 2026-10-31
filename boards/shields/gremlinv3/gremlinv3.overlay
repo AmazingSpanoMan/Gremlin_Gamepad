@@ -4,11 +4,11 @@
 #include <dt-bindings/pinctrl/nrf-pinctrl.h>
 #include <physical_layouts.dtsi>
 
+#ifndef NRF_SAADC_AIN0
+#define NRF_SAADC_AIN0 0
+#endif
 #ifndef NRF_SAADC_AIN5
 #define NRF_SAADC_AIN5 5
-#endif
-#ifndef NRF_SAADC_AIN7
-#define NRF_SAADC_AIN7 7
 #endif
 
 / {
@@ -31,7 +31,7 @@
         col-gpios
             = <&pro_micro 2 GPIO_ACTIVE_HIGH>  /* Col 0: P0.17 (Pin 5) */
             , <&pro_micro 3 GPIO_ACTIVE_HIGH>  /* Col 1: P0.20 (Pin 6) */
-            , <&gpio0 6     GPIO_ACTIVE_HIGH>  /* Col 2: P0.06 (Header Pin 2 / Silk 1 / RX - verified rescue pin) */
+            , <&pro_micro 4 GPIO_ACTIVE_HIGH>  /* Col 2: P0.22 (Header Pin 7 / Silk 4 - native PCB routing) */
             , <&pro_micro 5 GPIO_ACTIVE_HIGH>  /* Col 3: P0.24 (Pin 8) */
             , <&pro_micro 6 GPIO_ACTIVE_HIGH>  /* Col 4: P1.00 (Pin 9) */
             ;
@@ -46,13 +46,13 @@
     };
 
     /* -------------------------------------------------------------------------
-     * 2. DIRECT GPIO BUTTON (Joy-Con Stick Push / L3 Click on J2 Pin 1)
-     * Active-High with internal pull-down for Hall Effect stick (switches to 3.3V)
+     * 2. DIRECT GPIO BUTTON (Joy-Con Stick Push / L3 Click on J2 Pin 3)
+     * Active-Low with internal pull-up (Joy-Con push switch connects to GND on J2 Pin 2)
      * ------------------------------------------------------------------------- */
     kscan_direct: kscan_direct {
         compatible = "zmk,kscan-gpio-direct";
         wakeup-source;
-        input-gpios = <&pro_micro 19 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; /* P0.02 (AIN0) / Silk 19 / Pin 18 (J2 Pin 3) */
+        input-gpios = <&gpio0 31 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; /* P0.31 / Header Pin 20 / Silk 21 (J2 Pin 3) */
     };
 
     /* Composite kscan combining matrix keys and stick button */
@@ -136,7 +136,7 @@
      * ------------------------------------------------------------------------- */
     analog_stick0: analog_stick0 {
         compatible = "zmk,analog-stick";
-        io-channels = <&adc 0>, <&adc 1>; /* Channel 0 (AIN5: X via Silk 20) & Channel 1 (AIN7: Y via Silk 21) */
+        io-channels = <&adc 0>, <&adc 1>; /* Channel 0 (AIN0: X via Pin 18) & Channel 1 (AIN5: Y via Pin 19) */
         invert-x;
         x-min = <500>;
         x-center = <1909>;
@@ -189,49 +189,49 @@
     #address-cells = <1>;
     #size-cells = <0>;
 
-    /* Channel 0: Joy-Con X-Axis (J2 Pin 4 -> Silk 18 -> Jumpered to Silk 20 / Pin 19 / P0.29 / AIN5) */
+    /* Channel 0: Joy-Con X-Axis (J2 Pin 1 -> U1 Pin 18 / P0.02 / AIN0) */
     channel@0 {
         reg = <0>;
+        zephyr,gain = "ADC_GAIN_1_6";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+        zephyr,input-positive = <NRF_SAADC_AIN0>;
+        zephyr,resolution = <12>;
+    };
+
+    /* Channel 1: Joy-Con Y-Axis (J2 Pin 4 -> U1 Pin 19 / P0.29 / AIN5) */
+    channel@1 {
+        reg = <1>;
         zephyr,gain = "ADC_GAIN_1_6";
         zephyr,reference = "ADC_REF_INTERNAL";
         zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
         zephyr,input-positive = <NRF_SAADC_AIN5>;
         zephyr,resolution = <12>;
     };
-
-    /* Channel 1: Joy-Con Y-Axis (J2 Pin 1 -> Silk 21 / Pin 20 / P0.31 / AIN7) */
-    channel@1 {
-        reg = <1>;
-        zephyr,gain = "ADC_GAIN_1_6";
-        zephyr,reference = "ADC_REF_INTERNAL";
-        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
-        zephyr,input-positive = <NRF_SAADC_AIN7>;
-        zephyr,resolution = <12>;
-    };
 };
 
 /* -------------------------------------------------------------------------
- * 7. HARDWIRED NICE!VIEW DISPLAY (Sharp Memory LCD via SPI0)
+ * 7. NICE!VIEW DISPLAY SOLDER PADS (Sharp Memory LCD via SPI0)
  *
- * Wire Color Mapping to Middle Pins:
- * - CS   (Green)  -> Middle Pin 1 (P1.01)
- * - SCK  (Blue)   -> Middle Pin 2 (P1.02)
- * - MOSI (Yellow) -> Middle Pin 7 (P1.07)
- * - VCC  (Red)    -> Pin 21 (3.3V)
- * - GND  (Black)  -> Pin 3 or Pin 4 (GND)
+ * Dedicated Solder Pads (J3):
+ * - Pad 1: CS   -> U1 Pin 1  (P0.06)
+ * - Pad 2: SCK  -> U1 Pin 16 (P1.13)
+ * - Pad 3: MOSI -> U1 Pin 15 (P1.11)
+ * - Pad 4: 3.3V -> U1 Pin 21 (3.3V)
+ * - Pad 5: GND  -> GND plane
  * ------------------------------------------------------------------------- */
 &pinctrl {
     spi0_default: spi0_default {
         group1 {
-            psels = <NRF_PSEL(SPIM_SCK, 1, 2)>,    /* SCK (Blue):   P1.02 (Middle Pin 2) */
-                    <NRF_PSEL(SPIM_MOSI, 1, 7)>;  /* MOSI (Yellow): P1.07 (Middle Pin 7) */
+            psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,   /* SCK:  P1.13 (Header Pin 16 / J3 Pad 2) */
+                    <NRF_PSEL(SPIM_MOSI, 1, 11)>;  /* MOSI: P1.11 (Header Pin 15 / J3 Pad 3) */
         };
     };
 
     spi0_sleep: spi0_sleep {
         group1 {
-            psels = <NRF_PSEL(SPIM_SCK, 1, 2)>,
-                    <NRF_PSEL(SPIM_MOSI, 1, 7)>;
+            psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
+                    <NRF_PSEL(SPIM_MOSI, 1, 11)>;
             low-power-enable;
         };
     };
@@ -243,7 +243,7 @@
     pinctrl-0 = <&spi0_default>;
     pinctrl-1 = <&spi0_sleep>;
     pinctrl-names = "default", "sleep";
-    cs-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>; /* CS (Green): P1.01 (Middle Pin 1) */
+    cs-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>; /* CS: P0.06 (Header Pin 1 / J3 Pad 1) */
 
     nice_view: ls0xx@0 {
         compatible = "sharp,ls0xx";
@@ -254,7 +254,7 @@
     };
 };
 
-/* Explicitly disable hardware UART0 to release P0.06 (Pin 1 / TX0) for Matrix Col 2 */
+/* Explicitly disable hardware UART0 to release P0.06 (Header Pin 1 / Silk 0) for DISP_CS */
 &uart0 {
     status = "disabled";
 };
