@@ -144,20 +144,23 @@
 
     /* -------------------------------------------------------------------------
      * 5. ANALOG STICK DRIVER (wdtamagi/zmk-driver-analog-stick)
+     * Calibrated to actual live SAADC hardware readings:
+     * - X neutral: ~255, Right: ~50, Left: ~420
+     * - Y neutral: ~225, Up: ~0, Down: ~350
      * ------------------------------------------------------------------------- */
     analog_stick0: analog_stick0 {
         compatible = "zmk,analog-stick";
         io-channels = <&adc 0>, <&adc 1>; /* Channel 0 (AIN5: X via Silk 20) & Channel 1 (AIN7: Y via Silk 21) */
         invert-x;
-        x-min = <500>;
-        x-center = <1909>;
-        x-max = <3500>;
-        y-min = <400>;
-        y-center = <1933>;
-        y-max = <3500>;
+        x-min = <50>;
+        x-center = <255>;
+        x-max = <420>;
+        y-min = <0>;
+        y-center = <225>;
+        y-max = <350>;
         deadzone-percent = <20>;
         wait-period-idle = <100>;
-        wait-period-active = <1>;
+        wait-period-active = <10>;
     };
 
     analog_stick_listener0: analog_stick_listener0 {
@@ -168,7 +171,7 @@
         layer0 {
             layers = <0>;
             mode = <ANALOG_STICK_MODE_SWITCH>;
-            switch-activation-point = <28>;
+            switch-activation-point = <30>;
             switch-hysteresis = <6>;
             up-position = <23>;
             down-position = <24>;
