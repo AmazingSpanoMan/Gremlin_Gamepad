@@ -39,9 +39,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 1.0922,
-          "height": 2.0,
-          "width": 2.0
+          "drill": 0.0,
+          "height": 2.762,
+          "width": 0.26
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -78,15 +78,43 @@
       ],
       "drc_exclusions": [
         [
+          "courtyards_overlap|115318614|65518613|76b6dc17-6b08-439a-8f3a-e63fb89a5491|b5868a67-2a57-49b6-8f93-8d28045f3bfb",
+          ""
+        ],
+        [
+          "courtyards_overlap|116145000|69263683|062ab97f-21ea-4824-b768-11a7f050386f|b5868a67-2a57-49b6-8f93-8d28045f3bfb",
+          ""
+        ],
+        [
+          "courtyards_overlap|118655000|65412228|07677da3-5302-466d-969f-fca9b080d03a|b5868a67-2a57-49b6-8f93-8d28045f3bfb",
+          ""
+        ],
+        [
+          "courtyards_overlap|133300132|60500132|3b66786b-c111-406f-8ec2-0496c2b605c6|f2a9775c-f9d5-430e-bbbe-3322498471f6",
+          ""
+        ],
+        [
+          "courtyards_overlap|134145000|63875054|07677da3-5302-466d-969f-fca9b080d03a|f2a9775c-f9d5-430e-bbbe-3322498471f6",
+          ""
+        ],
+        [
+          "courtyards_overlap|136655000|59953131|8edde1ab-a21f-43c3-a28f-902f5668d6aa|f2a9775c-f9d5-430e-bbbe-3322498471f6",
+          ""
+        ],
+        [
+          "courtyards_overlap|170145000|58748411|b7e6f20c-de74-40db-83ee-21a51eb80281|f2a75303-51c5-48e9-b604-6a6b094dd97b",
+          ""
+        ],
+        [
+          "courtyards_overlap|172655000|54830010|f2a75303-51c5-48e9-b604-6a6b094dd97b|f83c41b6-6d19-47ed-ba19-ec5491789012",
+          ""
+        ],
+        [
           "lib_footprint_mismatch|111320000|149075000|61231728-5230-4650-8b0d-2e2996391816|00000000-0000-0000-0000-000000000000",
           ""
         ],
         [
           "lib_footprint_mismatch|116290000|131100000|22a3a807-c669-4fe0-bee1-5b6a0afb621a|00000000-0000-0000-0000-000000000000",
-          ""
-        ],
-        [
-          "lib_footprint_mismatch|188276300|132600000|b91e05a7-c9ac-4e9e-9a7c-7b383f262510|00000000-0000-0000-0000-000000000000",
           ""
         ],
         [
