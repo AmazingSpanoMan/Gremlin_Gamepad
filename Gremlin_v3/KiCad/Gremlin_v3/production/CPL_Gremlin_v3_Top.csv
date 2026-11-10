@@ -1,0 +1,25 @@
+Designator,Val,Package,Mid X,Mid Y,Rotation,Layer
+J3,NiceView_Pads,PinHeader_1x05_P2.54mm_Vertical,122.0000,-115.0000,90.0,Top
+S1,Keyswitch,Hotswap_Choc_V1,108.4000,-58.6000,0.0,Top
+S2,Keyswitch,Hotswap_Choc_V1,126.4000,-53.6000,0.0,Top
+S3,Keyswitch,Hotswap_Choc_V1,144.4000,-48.6000,0.0,Top
+S4,Keyswitch,Hotswap_Choc_V1,162.4000,-53.6000,0.0,Top
+S5,Keyswitch,Hotswap_Choc_V1,180.4000,-58.6000,0.0,Top
+S6,Keyswitch,Hotswap_Choc_V1,108.4000,-75.6000,0.0,Top
+S7,Keyswitch,Hotswap_Choc_V1,126.4000,-70.6000,0.0,Top
+S8,Keyswitch,Hotswap_Choc_V1,144.4000,-65.6000,0.0,Top
+S9,Keyswitch,Hotswap_Choc_V1,162.4000,-70.6000,0.0,Top
+S10,Keyswitch,Hotswap_Choc_V1,180.4000,-75.6000,0.0,Top
+S11,Keyswitch,Hotswap_Choc_V1,108.4000,-92.6000,0.0,Top
+S12,Keyswitch,Hotswap_Choc_V1,126.4000,-87.6000,0.0,Top
+S13,Keyswitch,Hotswap_Choc_V1,144.4000,-82.6000,0.0,Top
+S14,Keyswitch,Hotswap_Choc_V1,162.4000,-87.6000,0.0,Top
+S15,Keyswitch,Hotswap_Choc_V1,180.4000,-92.6000,0.0,Top
+S16,Keyswitch,Hotswap_Choc_V1,108.4000,-109.6000,0.0,Top
+S17,Keyswitch,Hotswap_Choc_V1,126.4000,-104.6000,0.0,Top
+S18,Keyswitch,Hotswap_Choc_V1,144.4000,-99.6000,0.0,Top
+S19,Keyswitch,Hotswap_Choc_V1,162.4000,-104.6000,0.0,Top
+S20,Keyswitch,Hotswap_Choc_V1,180.4000,-109.6000,0.0,Top
+S21,Keyswitch,Hotswap_Choc_V1,156.2126,-125.0235,-15.0,Top
+S22,Keyswitch,Hotswap_Choc_V1,174.0252,-129.4470,-15.0,Top
+U1,Nice_Nano_V2,Nice_Nano_V2,117.0300,-131.1000,90.0,Top

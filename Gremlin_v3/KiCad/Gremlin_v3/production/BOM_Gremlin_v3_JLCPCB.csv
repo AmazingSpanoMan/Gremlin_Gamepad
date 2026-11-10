@@ -1,0 +1,9 @@
+Comment,Designator,Footprint,LCSC Part #,Type,Layer
+1N4148W (Switch Matrix Isolation Diodes),"D1,D2,D3,D4,D5,D6,D7,D8,D9,D10,D11,D12,D13,D14,D15,D16,D17,D18,D19,D20,D21,D22",Diode_SOD-123,C81598,SMD,Bottom
+503480-0540 (0.5mm Pitch 5-Pin FPC Joy-Con Connector),J2,CONN_503480-0540_MOL,C262325,SMD,Bottom
+"Tactile Push Button (Reset Switch, 4.7x3.5mm)",SW1,Panasonic_EVQPUJ_EVQPUA,C318884,SMD,Bottom
+"SPDT Slide Switch (Power On/Off, PCM12 / MSK-12D19)",SW2,SW_SPDT_PCM12,C37694,SMD,Bottom
+Kailh Choc V1 Hotswap Sockets (PG1350),"S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13,S14,S15,S16,S17,S18,S19,S20,S21,S22",Hotswap_Choc_V1,C2895697,SMD,Top
+JST-EH 2-Pin 2.50mm Horizontal Battery Header,J1,JST_EH_S2B-EH_1x02_P2.50mm_Horizontal,C295744,THT,Bottom
+Nice!Nano v2 Controller Pin Headers (2x 12-pin 2.54mm),U1,Nice_Nano_V2,Hand-Solder / Socketed,THT,Top
+Nice!View Sharp Memory LCD Solder Pads (1x 5-pin 2.54mm),J3,PinHeader_1x05_P2.54mm_Vertical,Hand-Solder / Wire Pads,THT,Top
