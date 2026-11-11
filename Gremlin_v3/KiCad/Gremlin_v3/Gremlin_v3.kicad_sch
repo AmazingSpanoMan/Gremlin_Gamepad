@@ -3320,8 +3320,8 @@
 			)
 		)
 	)
-	(global_label "JOY_X"
-		(shape output)
+	(global_label "+3V3"
+		(shape input)
 		(at 234.95 102.87 270)
 		(fields_autoplaced yes)
 		(effects
@@ -3344,8 +3344,8 @@
 			)
 		)
 	)
-	(global_label "GND"
-		(shape input)
+	(global_label "JOY_Y"
+		(shape output)
 		(at 237.49 102.87 270)
 		(fields_autoplaced yes)
 		(effects
@@ -3392,8 +3392,8 @@
 			)
 		)
 	)
-	(global_label "JOY_Y"
-		(shape output)
+	(global_label "GND"
+		(shape input)
 		(at 242.57 102.87 270)
 		(fields_autoplaced yes)
 		(effects
@@ -3416,8 +3416,8 @@
 			)
 		)
 	)
-	(global_label "+3V3"
-		(shape input)
+	(global_label "JOY_X"
+		(shape output)
 		(at 245.11 102.87 270)
 		(fields_autoplaced yes)
 		(effects
