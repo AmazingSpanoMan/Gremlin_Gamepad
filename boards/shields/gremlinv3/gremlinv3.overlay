@@ -144,11 +144,11 @@
      * 5. ANALOG STICK DRIVER (wdtamagi/zmk-driver-analog-stick)
      * Calibrated to live 12-bit SAADC hardware readings in mounted keypad orientation:
      * - Driver X = &adc 1 (AIN5 / Header Pin 19): Left ~3217, Center ~1965, Right ~684 (invert-x)
-     * - Driver Y = &adc 0 (AIN0 / Header Pin 18): Up ~301, Center ~1805, Down ~3246
+     * - Driver Y = &adc 2 (AIN0 / Header Pin 18): Up ~301, Center ~1805, Down ~3246
      * ------------------------------------------------------------------------- */
     analog_stick0: analog_stick0 {
         compatible = "zmk,analog-stick";
-        io-channels = <&adc 1>, <&adc 0>; /* X: Channel 1 (AIN5 / Pin 19), Y: Channel 0 (AIN0 / Pin 18) */
+        io-channels = <&adc 1>, <&adc 2>; /* X: Channel 1 (AIN5 / Pin 19), Y: Channel 2 (AIN0 / Pin 18); Ch 0 reserved for VDDH battery */
         invert-x;
         x-min = <760>;
         x-center = <1965>;
@@ -201,9 +201,10 @@
     #address-cells = <1>;
     #size-cells = <0>;
 
-    /* Channel 0: AIN0 (U1 Pin 18 / P0.02 -> Keypad Up/Down axis) */
-    channel@0 {
-        reg = <0>;
+    /* Channel 2: AIN0 (U1 Pin 18 / P0.02 -> Keypad Up/Down axis).
+     * SAADC Channel 0 is left free for zmk,battery-nrf-vddh (VDDHDIV5). */
+    channel@2 {
+        reg = <2>;
         zephyr,gain = "ADC_GAIN_1_6";
         zephyr,reference = "ADC_REF_INTERNAL";
         zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
