@@ -375,6 +375,115 @@ static void j3_test_sharp_bitbang(void)
     LOG_INF("[DIAG-BB] SHARP 160x68 BITBANG DONE (68 lines x2, H0H1, tsSCS=25us, ~66kHz)");
 }
 
+static void j3_probe_sanity(void)
+{
+    /* Verify internal pull-up / pull-down on unconnected PCB pads D0(P0.08) and D18(P1.15) */
+    NRF_P0->PIN_CNF[8] = J3_CNF_IN_NP;
+    NRF_P1->PIN_CNF[15] = J3_CNF_IN_NP;
+    k_busy_wait(100);
+    uint8_t d0_np = (uint8_t)((NRF_P0->IN >> 8) & 1U);
+    uint8_t d18_np = (uint8_t)((NRF_P1->IN >> 15) & 1U);
+
+    NRF_P0->PIN_CNF[8] = J3_CNF_IN_PU;
+    NRF_P1->PIN_CNF[15] = J3_CNF_IN_PU;
+    k_busy_wait(100);
+    uint8_t d0_pu = (uint8_t)((NRF_P0->IN >> 8) & 1U);
+    uint8_t d18_pu = (uint8_t)((NRF_P1->IN >> 15) & 1U);
+
+    NRF_P0->PIN_CNF[8] = J3_CNF_IN_PD;
+    NRF_P1->PIN_CNF[15] = J3_CNF_IN_PD;
+    k_busy_wait(100);
+    uint8_t d0_pd = (uint8_t)((NRF_P0->IN >> 8) & 1U);
+    uint8_t d18_pd = (uint8_t)((NRF_P1->IN >> 15) & 1U);
+
+    LOG_INF("[DIAG-SANITY] D0(NC) np/pu/pd=%u/%u/%u D18(NC) np/pu/pd=%u/%u/%u",
+            (unsigned int)d0_np, (unsigned int)d0_pu, (unsigned int)d0_pd,
+            (unsigned int)d18_np, (unsigned int)d18_pu, (unsigned int)d18_pd);
+}
+
+static bool j3_probe_ext_pwr_low(void)
+{
+    /* Test whether controller VCC switch P0.13 uses active-low logic (0 = ON) before any pump test */
+    for (int k = 0; k < 3; k++) {
+        j3_port(&j3_pins[k])->PIN_CNF[j3_pins[k].pin] = J3_CNF_OUT_IN;
+        j3_pin_write(&j3_pins[k], 0U);
+    }
+    k_msleep(2);
+    for (int k = 0; k < 3; k++) {
+        j3_port(&j3_pins[k])->PIN_CNF[j3_pins[k].pin] = J3_CNF_IN_NP;
+    }
+
+    NRF_P0->OUTCLR = (1UL << 13);
+    k_msleep(50);
+
+    uint8_t pu[3];
+    uint8_t np[3];
+    for (int k = 0; k < 3; k++) {
+        np[k] = j3_pin_read(&j3_pins[k]);
+        j3_port(&j3_pins[k])->PIN_CNF[j3_pins[k].pin] = J3_CNF_IN_PU;
+    }
+    k_msleep(5);
+    for (int k = 0; k < 3; k++) {
+        pu[k] = j3_pin_read(&j3_pins[k]);
+    }
+
+    LOG_INF("[DIAG-PWR0] P0.13=0: CS(np/pu)=%u/%u SCK=%u/%u MOSI=%u/%u",
+            (unsigned int)np[0], (unsigned int)pu[0],
+            (unsigned int)np[1], (unsigned int)pu[1],
+            (unsigned int)np[2], (unsigned int)pu[2]);
+
+    if (pu[0] != 0U || pu[1] != 0U || pu[2] != 0U) {
+        LOG_INF("[DIAG-PWR0] EXT_PWR INVERTED DETECTED! Keeping P0.13=0");
+        return true;
+    }
+    return false;
+}
+
+static void j3_probe_pump(void)
+{
+    /* H0H1 ESD charge-pump test: if VDD on nice!view is unpowered & floating, driving 2 pins HIGH lifts the 3rd */
+    for (int i = 0; i < 3; i++) {
+        const struct j3_gpio_ref *t = &j3_pins[i];
+        const struct j3_gpio_ref *o1 = &j3_pins[(i + 1) % 3];
+        const struct j3_gpio_ref *o2 = &j3_pins[(i + 2) % 3];
+
+        for (int k = 0; k < 3; k++) {
+            j3_port(&j3_pins[k])->PIN_CNF[j3_pins[k].pin] = J3_CNF_OUT_IN;
+            j3_pin_write(&j3_pins[k], 0U);
+        }
+        k_msleep(10);
+
+        j3_port(o1)->PIN_CNF[o1->pin] = J3_CNF_IN_NP;
+        j3_port(o2)->PIN_CNF[o2->pin] = J3_CNF_IN_NP;
+        j3_port(t)->PIN_CNF[t->pin] = J3_CNF_IN_PU;
+        k_busy_wait(100);
+        uint8_t pu_off = j3_pin_read(t);
+
+        j3_port(o1)->PIN_CNF[o1->pin] = J3_CNF_OUT_HI;
+        j3_port(o2)->PIN_CNF[o2->pin] = J3_CNF_OUT_HI;
+        j3_pin_write(o1, 1U);
+        j3_pin_write(o2, 1U);
+        k_msleep(30);
+        uint8_t pu_on = j3_pin_read(t);
+
+        j3_port(t)->PIN_CNF[t->pin] = J3_CNF_IN_NP;
+        k_busy_wait(100);
+        uint8_t np_on = j3_pin_read(t);
+
+        j3_port(t)->PIN_CNF[t->pin] = J3_CNF_IN_PU;
+        j3_port(o1)->PIN_CNF[o1->pin] = J3_CNF_OUT_IN;
+        j3_port(o2)->PIN_CNF[o2->pin] = J3_CNF_OUT_IN;
+        j3_pin_write(o1, 0U);
+        j3_pin_write(o2, 0U);
+        k_msleep(2);
+        uint8_t pu_post = j3_pin_read(t);
+
+        LOG_INF("[DIAG-PUMP] %s pu(off/pump/post)=%u/%u/%u np_pump=%u",
+                t->name, (unsigned int)pu_off, (unsigned int)pu_on,
+                (unsigned int)pu_post, (unsigned int)np_on);
+    }
+}
+
 static struct k_work_delayable j3_diag_work;
 static uint8_t j3_diag_retries;
 
@@ -399,6 +508,7 @@ static void j3_diag_work_handler(struct k_work *work)
     uint8_t out_cs = (uint8_t)((NRF_P0->OUT >> 6) & 1U);
     uint8_t out_sck = (uint8_t)((NRF_P1->OUT >> 13) & 1U);
     uint8_t out_mosi = (uint8_t)((NRF_P1->OUT >> 11) & 1U);
+    uint8_t out_pwr = (uint8_t)((NRF_P0->OUT >> 13) & 1U);
 
     LOG_INF("[DIAG-HW] PRE SPIM3 en=%u psel(sck=0x%x mosi=0x%x) CNF(cs=0x%08x sck=0x%08x mosi=0x%08x) OUT=%u/%u/%u",
             (unsigned int)saved_en, (unsigned int)saved_sck, (unsigned int)saved_mosi,
@@ -410,6 +520,17 @@ static void j3_diag_work_handler(struct k_work *work)
     NRF_SPIM3->PSEL.MOSI = 0xFFFFFFFFUL;
 
     j3_probe_electrical();
+    j3_probe_sanity();
+    bool keep_pwr_low = j3_probe_ext_pwr_low();
+    if (!keep_pwr_low) {
+        if (out_pwr != 0U) {
+            NRF_P0->OUTSET = (1UL << 13);
+        } else {
+            NRF_P0->OUTCLR = (1UL << 13);
+        }
+        k_msleep(20);
+        j3_probe_pump();
+    }
     j3_test_sharp_bitbang();
 
     j3_pin_write(&j3_pins[0], out_cs);
