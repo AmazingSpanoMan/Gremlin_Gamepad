@@ -7,3 +7,9 @@ if(CONFIG_SHIELD_GREMLINV3 AND CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM)
     )
     target_include_directories(app PRIVATE boards/shields/gremlinv3/src)
 endif()
+
+if(CONFIG_SHIELD_GREMLINV3 AND CONFIG_ZMK_DISPLAY)
+    target_sources(app PRIVATE
+        boards/shields/gremlinv3/src/display_diag.c
+    )
+endif()
