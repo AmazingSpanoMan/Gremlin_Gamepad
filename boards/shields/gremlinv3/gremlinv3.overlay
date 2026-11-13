@@ -224,7 +224,7 @@
 };
 
 /* -------------------------------------------------------------------------
- * 7. NICE!VIEW DISPLAY SOLDER PADS (Sharp Memory LCD via SPI3 diagnostic)
+ * 7. NICE!VIEW DISPLAY SOLDER PADS (Sharp Memory LCD via SPI0)
  *
  * Dedicated Solder Pads (J3):
  * - Pad 1: CS   -> U1 Pin 1  (P0.06)
@@ -234,14 +234,14 @@
  * - Pad 5: GND  -> GND plane
  * ------------------------------------------------------------------------- */
 &pinctrl {
-    spi3_default: spi3_default {
+    spi0_default: spi0_default {
         group1 {
             psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,   /* SCK:  P1.13 (Header Pin 16 / J3 Pad 2) */
                     <NRF_PSEL(SPIM_MOSI, 1, 11)>;  /* MOSI: P1.11 (Header Pin 15 / J3 Pad 3) */
         };
     };
 
-    spi3_sleep: spi3_sleep {
+    spi0_sleep: spi0_sleep {
         group1 {
             psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
                     <NRF_PSEL(SPIM_MOSI, 1, 11)>;
@@ -250,11 +250,11 @@
     };
 };
 
-&spi3 {
+&spi0 {
     compatible = "nordic,nrf-spim";
     status = "okay";
-    pinctrl-0 = <&spi3_default>;
-    pinctrl-1 = <&spi3_sleep>;
+    pinctrl-0 = <&spi0_default>;
+    pinctrl-1 = <&spi0_sleep>;
     pinctrl-names = "default", "sleep";
     cs-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>; /* CS: P0.06 (Header Pin 1 / J3 Pad 1) */
 
