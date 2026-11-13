@@ -45,7 +45,7 @@
          * Layer 0: Game / Default
          * Top 2 rows: Ctrl + Numbers (Ctrl+1..5, Ctrl+6..0)
          * Bottom 2 rows: Numbers (1..5, 6..9), Space
-         * Thumbs: G (S21), V (S22)
+         * Thumbs: 0 (S21), Ctrl+G (S22)
          * Analog Stick Mode: SWITCH (Emulates WASD) + Click (0)
          * ----------------------------------------------------------------------
          */
@@ -61,7 +61,7 @@
                 /* Row 3: S16 - S20 (Numbers 6..9, Space) */
                 &kp N6        &kp N7        &kp N8        &kp N9        &kp SPACE
                 /* Thumb Keys: S21, S22 */
-                &kp G         &kp V
+                &kp N0        &kp LC(G)
                 /* Joy-Con Stick Click (L3) */
                 &kp N0
                 /* Joy-Con Analog Stick Directions (Switch Mode: WASD) */
