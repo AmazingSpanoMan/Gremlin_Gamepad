@@ -28,9 +28,10 @@
     combos {
         compatible = "zmk,combos";
 
-        /* Press both thumb keys (G + V / S21 + S22) to momentarily activate Settings layer */
+        /* Press both thumb keys (G + V / S21 + S22) together to momentarily activate Settings layer */
         combo_settings {
-            timeout-ms = <60>;
+            timeout-ms = <150>;
+            slow-release;
             key-positions = <20 21>;
             bindings = <&mo 3>;
         };
