@@ -4,13 +4,20 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/spinlock.h>
+#include <zephyr/sys/atomic.h>
+#if IS_ENABLED(CONFIG_INPUT)
+#include <zephyr/input/input.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <lvgl.h>
 
 #include <zmk/display.h>
 #include <zmk/display/status_screen.h>
+#include <zmk/activity.h>
 #include <zmk/event_manager.h>
+#include <zmk/events/activity_state_changed.h>
 #include <zmk/events/position_state_changed.h>
 #include <zmk/events/layer_state_changed.h>
 #include <zmk/events/battery_state_changed.h>
@@ -71,7 +78,9 @@ static const uint8_t anim_sequence[] = {
 };
 #define ANIM_SEQ_LEN (sizeof(anim_sequence) / sizeof(anim_sequence[0]))
 
+static struct k_spinlock activity_lock;
 static int64_t last_activity_time = 0;
+static atomic_t display_sleeping = ATOMIC_INIT(0);
 static bool is_sleeping = false;
 static bool boot_complete = false;
 
@@ -293,8 +302,11 @@ static void mascot_anim_cb(lv_timer_t *timer) {
 }
 
 static void boot_timer_cb(lv_timer_t *timer) {
-    boot_complete = true;
+    ARG_UNUSED(timer);
+    k_spinlock_key_t key = k_spin_lock(&activity_lock);
     last_activity_time = k_uptime_get();
+    k_spin_unlock(&activity_lock, key);
+    boot_complete = true;
 
     if (boot_canvas) {
         lv_obj_add_flag(boot_canvas, LV_OBJ_FLAG_HIDDEN);
@@ -310,12 +322,65 @@ static void boot_timer_cb(lv_timer_t *timer) {
     mascot_timer = lv_timer_create(mascot_anim_cb, 350, NULL);
 }
 
-static void idle_check_cb(lv_timer_t *timer) {
-    if (!boot_complete) {
+static void wake_ui_work_handler(struct k_work *work) {
+    ARG_UNUSED(work);
+
+    if (!boot_complete || !is_sleeping) {
         return;
     }
+
+    is_sleeping = false;
+    atomic_set(&display_sleeping, 0);
+    if (sleep_canvas) {
+        lv_obj_add_flag(sleep_canvas, LV_OBJ_FLAG_HIDDEN);
+    }
+    if (active_cont) {
+        lv_obj_clear_flag(active_cont, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_invalidate(active_cont);
+    }
+    if (mascot_timer) {
+        lv_timer_resume(mascot_timer);
+    }
+    draw_status_content();
+}
+
+K_WORK_DEFINE(wake_ui_work, wake_ui_work_handler);
+
+static void record_activity(void) {
+    k_spinlock_key_t key = k_spin_lock(&activity_lock);
+    last_activity_time = k_uptime_get();
+    k_spin_unlock(&activity_lock, key);
+
+    if (atomic_get(&display_sleeping) && zmk_display_is_initialized()) {
+        k_work_submit_to_queue(zmk_display_work_q(), &wake_ui_work);
+    }
+}
+
+static void idle_check_cb(lv_timer_t *timer) {
+    ARG_UNUSED(timer);
+
+    if (!boot_complete || is_sleeping) {
+        return;
+    }
+
+    k_spinlock_key_t key = k_spin_lock(&activity_lock);
+    int64_t elapsed = k_uptime_get() - last_activity_time;
+    k_spin_unlock(&activity_lock, key);
+
     /* Inactivity timeout: 30 seconds (30,000 ms) */
-    if (!is_sleeping && (k_uptime_get() - last_activity_time > 30000)) {
+    if (elapsed > 30000) {
+        atomic_set(&display_sleeping, 1);
+
+        /* Re-check after publishing display_sleeping to avoid missing concurrent activity */
+        key = k_spin_lock(&activity_lock);
+        elapsed = k_uptime_get() - last_activity_time;
+        k_spin_unlock(&activity_lock, key);
+
+        if (elapsed <= 30000) {
+            atomic_set(&display_sleeping, 0);
+            return;
+        }
+
         is_sleeping = true;
         if (active_cont) {
             lv_obj_add_flag(active_cont, LV_OBJ_FLAG_HIDDEN);
@@ -331,36 +396,41 @@ static void idle_check_cb(lv_timer_t *timer) {
 }
 
 /* -------------------------------------------------------------------------
- * Key Activity Listener
+ * Key, Activity, and Analog Input Listeners
  * ------------------------------------------------------------------------- */
-static int on_key_event(const zmk_event_t *eh) {
-    const struct zmk_position_state_changed *ev = as_zmk_position_state_changed(eh);
-    if (ev == NULL) {
+static int on_sleep_event(const zmk_event_t *eh) {
+    if (as_zmk_position_state_changed(eh) != NULL) {
+        record_activity();
         return ZMK_EV_EVENT_BUBBLE;
     }
 
-    last_activity_time = k_uptime_get();
-
-    if (is_sleeping) {
-        is_sleeping = false;
-        if (sleep_canvas) {
-            lv_obj_add_flag(sleep_canvas, LV_OBJ_FLAG_HIDDEN);
-        }
-        if (active_cont) {
-            lv_obj_clear_flag(active_cont, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_invalidate(active_cont);
-        }
-        if (mascot_timer) {
-            lv_timer_resume(mascot_timer);
-        }
-        draw_status_content();
+    const struct zmk_activity_state_changed *act_ev = as_zmk_activity_state_changed(eh);
+    if (act_ev != NULL && act_ev->state == ZMK_ACTIVITY_ACTIVE) {
+        record_activity();
     }
 
     return ZMK_EV_EVENT_BUBBLE;
 }
 
-ZMK_LISTENER(gremlin_sleep_listener, on_key_event);
+ZMK_LISTENER(gremlin_sleep_listener, on_sleep_event);
 ZMK_SUBSCRIPTION(gremlin_sleep_listener, zmk_position_state_changed);
+ZMK_SUBSCRIPTION(gremlin_sleep_listener, zmk_activity_state_changed);
+
+#if IS_ENABLED(CONFIG_INPUT)
+static void on_input_event(struct input_event *evt) {
+    switch (evt->type) {
+    case INPUT_EV_ABS:
+    case INPUT_EV_REL:
+    case INPUT_EV_KEY:
+        record_activity();
+        break;
+    default:
+        break;
+    }
+}
+
+INPUT_CALLBACK_DEFINE(NULL, on_input_event);
+#endif
 
 /* -------------------------------------------------------------------------
  * Main Status Screen Entry Point
