@@ -70,6 +70,7 @@
     /* Composite kscan combining matrix keys and stick button */
     kscan_composite: kscan_composite {
         compatible = "zmk,kscan-composite";
+        wakeup-source;
         columns = <5>;
         rows = <6>;
 
