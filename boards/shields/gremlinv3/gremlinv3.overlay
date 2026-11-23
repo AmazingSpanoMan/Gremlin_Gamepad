@@ -198,35 +198,35 @@
      * Pre-instantiated zero-arg behaviors configurable at runtime via NVS & RPC.
      * ------------------------------------------------------------------------- */
     behaviors {
-#define GREMLIN_HT_NODE(slot, dname) \
-        gh_##slot: gh_##slot { \
+#define GREMLIN_HT_NODE(_slot, dname) \
+        gh_##_slot: gh_##_slot { \
             compatible = "zmk,behavior-hold-tap"; \
             #binding-cells = <2>; \
             tapping-term-ms = <200>; \
             flavor = "hold-preferred"; \
             bindings = <&kp>, <&kp>; \
-            gremlin-slot = <slot>; \
+            gremlin-slot = <_slot>; \
             display-name = dname; \
         };
 
-#define GREMLIN_TD_NODE(slot, dname) \
-        gtd_##slot: gtd_##slot { \
+#define GREMLIN_TD_NODE(_slot, dname) \
+        gtd_##_slot: gtd_##_slot { \
             compatible = "zmk,behavior-tap-dance"; \
             #binding-cells = <0>; \
             tapping-term-ms = <200>; \
             bindings = <&none>; \
-            gremlin-slot = <slot>; \
+            gremlin-slot = <_slot>; \
             display-name = dname; \
         };
 
-#define GREMLIN_MAC_NODE(slot, dname) \
-        gmac_##slot: gmac_##slot { \
+#define GREMLIN_MAC_NODE(_slot, dname) \
+        gmac_##_slot: gmac_##_slot { \
             compatible = "zmk,behavior-macro"; \
             #binding-cells = <0>; \
             wait-ms = <10>; \
             tap-ms = <10>; \
             bindings = <&none>; \
-            gremlin-slot = <slot>; \
+            gremlin-slot = <_slot>; \
             display-name = dname; \
         };
 
