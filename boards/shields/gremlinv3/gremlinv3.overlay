@@ -192,6 +192,91 @@
             mode = <ANALOG_STICK_MODE_SCROLL>;
         };
     };
+
+    /* -------------------------------------------------------------------------
+     * 5B. GREMLIN STUDIO DYNAMIC RUNTIME BEHAVIORS (Hold-Tap / Tap-Dance / Macro)
+     * Pre-instantiated zero-arg behaviors configurable at runtime via NVS & RPC.
+     * ------------------------------------------------------------------------- */
+    behaviors {
+#define GREMLIN_HT_NODE(slot, dname) \
+        gh_##slot: gh_##slot { \
+            compatible = "zmk,behavior-hold-tap"; \
+            #binding-cells = <2>; \
+            tapping-term-ms = <200>; \
+            flavor = "hold-preferred"; \
+            bindings = <&kp>, <&kp>; \
+            gremlin-slot = <slot>; \
+            display-name = dname; \
+        };
+
+#define GREMLIN_TD_NODE(slot, dname) \
+        gtd_##slot: gtd_##slot { \
+            compatible = "zmk,behavior-tap-dance"; \
+            #binding-cells = <0>; \
+            tapping-term-ms = <200>; \
+            bindings = <&none>; \
+            gremlin-slot = <slot>; \
+            display-name = dname; \
+        };
+
+#define GREMLIN_MAC_NODE(slot, dname) \
+        gmac_##slot: gmac_##slot { \
+            compatible = "zmk,behavior-macro"; \
+            #binding-cells = <0>; \
+            wait-ms = <10>; \
+            tap-ms = <10>; \
+            bindings = <&none>; \
+            gremlin-slot = <slot>; \
+            display-name = dname; \
+        };
+
+        GREMLIN_HT_NODE(0, "Gremlin Hold 1")
+        GREMLIN_HT_NODE(1, "Gremlin Hold 2")
+        GREMLIN_HT_NODE(2, "Gremlin Hold 3")
+        GREMLIN_HT_NODE(3, "Gremlin Hold 4")
+        GREMLIN_HT_NODE(4, "Gremlin Hold 5")
+        GREMLIN_HT_NODE(5, "Gremlin Hold 6")
+        GREMLIN_HT_NODE(6, "Gremlin Hold 7")
+        GREMLIN_HT_NODE(7, "Gremlin Hold 8")
+        GREMLIN_HT_NODE(8, "Gremlin Hold 9")
+        GREMLIN_HT_NODE(9, "Gremlin Hold 10")
+        GREMLIN_HT_NODE(10, "Gremlin Hold 11")
+        GREMLIN_HT_NODE(11, "Gremlin Hold 12")
+        GREMLIN_HT_NODE(12, "Gremlin Hold 13")
+        GREMLIN_HT_NODE(13, "Gremlin Hold 14")
+        GREMLIN_HT_NODE(14, "Gremlin Hold 15")
+        GREMLIN_HT_NODE(15, "Gremlin Hold 16")
+        GREMLIN_HT_NODE(16, "Gremlin Hold 17")
+        GREMLIN_HT_NODE(17, "Gremlin Hold 18")
+        GREMLIN_HT_NODE(18, "Gremlin Hold 19")
+        GREMLIN_HT_NODE(19, "Gremlin Hold 20")
+        GREMLIN_HT_NODE(20, "Gremlin Hold 21")
+        GREMLIN_HT_NODE(21, "Gremlin Hold 22")
+        GREMLIN_HT_NODE(22, "Gremlin Hold 23")
+        GREMLIN_HT_NODE(23, "Gremlin Hold 24")
+
+        GREMLIN_TD_NODE(0, "Gremlin TapDance 1")
+        GREMLIN_TD_NODE(1, "Gremlin TapDance 2")
+        GREMLIN_TD_NODE(2, "Gremlin TapDance 3")
+        GREMLIN_TD_NODE(3, "Gremlin TapDance 4")
+        GREMLIN_TD_NODE(4, "Gremlin TapDance 5")
+        GREMLIN_TD_NODE(5, "Gremlin TapDance 6")
+        GREMLIN_TD_NODE(6, "Gremlin TapDance 7")
+        GREMLIN_TD_NODE(7, "Gremlin TapDance 8")
+
+        GREMLIN_MAC_NODE(0, "Gremlin Macro 1")
+        GREMLIN_MAC_NODE(1, "Gremlin Macro 2")
+        GREMLIN_MAC_NODE(2, "Gremlin Macro 3")
+        GREMLIN_MAC_NODE(3, "Gremlin Macro 4")
+        GREMLIN_MAC_NODE(4, "Gremlin Macro 5")
+        GREMLIN_MAC_NODE(5, "Gremlin Macro 6")
+        GREMLIN_MAC_NODE(6, "Gremlin Macro 7")
+        GREMLIN_MAC_NODE(7, "Gremlin Macro 8")
+
+#undef GREMLIN_HT_NODE
+#undef GREMLIN_TD_NODE
+#undef GREMLIN_MAC_NODE
+    };
 };
 
 /* -------------------------------------------------------------------------

@@ -2,15 +2,15 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: wdtamagi
-      url-base: https://github.com/wdtamagi
+    - name: amazingspanoman
+      url-base: https://github.com/AmazingSpanoMan
   projects:
     - name: zmk
-      remote: zmkfirmware
-      revision: v0.3
+      remote: amazingspanoman
+      revision: gremlin-v0.3
       import: app/west.yml
     - name: zmk-driver-analog-stick
-      remote: wdtamagi
-      revision: main
+      remote: amazingspanoman
+      revision: gremlin
   self:
     path: config
